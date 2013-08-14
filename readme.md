@@ -71,7 +71,7 @@
      error:nil];
 
 
-### Retrieve audio information
+### Retrieve player information
 	double duration = self.player.duration;
     double progress = self.player.progress;
 	double currentTime = self.player.currentTime;
