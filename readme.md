@@ -1,4 +1,6 @@
 # Audio Stream Player for Objective-C
+Note: Build on Xcode 5
+
 ## Basic usage
     self.player = [[HSUAudioStreamPlayer alloc]
                    initWithURL:[NSURL URLWithString:@"http://goo.gl/ATX7Ea"]
@@ -6,6 +8,7 @@
 	[self.player play];
 
 ## Advanced usages
+![](https://dl.dropboxusercontent.com/s/4arz05ulf14hnf8/asp-screenshot-01.png?token_hash=AAE98ePdAgKkHXSxHmU15_9HoOYJjbNvc3E49zgUhfFoPQ&dl=1 "Demo Screenshot")
 
 ### Player for HTTP URL
     self.player = [[HSUAudioStreamPlayer alloc]
@@ -78,3 +81,4 @@
 
 ## And more
 
+todo
