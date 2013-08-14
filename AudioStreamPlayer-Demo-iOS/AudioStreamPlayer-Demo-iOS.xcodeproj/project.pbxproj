@@ -1,0 +1,358 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		969036FF17BB27F6003E4643 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 969036FE17BB27F6003E4643 /* Foundation.framework */; };
+		9690370117BB27F6003E4643 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9690370017BB27F6003E4643 /* CoreGraphics.framework */; };
+		9690370317BB27F6003E4643 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9690370217BB27F6003E4643 /* UIKit.framework */; };
+		9690370917BB27F6003E4643 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9690370717BB27F6003E4643 /* InfoPlist.strings */; };
+		9690370B17BB27F6003E4643 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9690370A17BB27F6003E4643 /* main.m */; };
+		9690370F17BB27F6003E4643 /* HSUAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9690370E17BB27F6003E4643 /* HSUAppDelegate.m */; };
+		9690371217BB27F6003E4643 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9690371017BB27F6003E4643 /* Main.storyboard */; };
+		9690371517BB27F6003E4643 /* HSUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9690371417BB27F6003E4643 /* HSUViewController.m */; };
+		9690371717BB27F6003E4643 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9690371617BB27F6003E4643 /* Images.xcassets */; };
+		9690373A17BB2867003E4643 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9690373917BB2867003E4643 /* AVFoundation.framework */; };
+		9690373C17BB2888003E4643 /* libAudioStreamPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9690373B17BB2888003E4643 /* libAudioStreamPlayer.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		969036FB17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AudioStreamPlayer-Demo-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		969036FE17BB27F6003E4643 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		9690370017BB27F6003E4643 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		9690370217BB27F6003E4643 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		9690370617BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AudioStreamPlayer-Demo-iOS-Info.plist"; sourceTree = "<group>"; };
+		9690370817BB27F6003E4643 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9690370A17BB27F6003E4643 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9690370C17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AudioStreamPlayer-Demo-iOS-Prefix.pch"; sourceTree = "<group>"; };
+		9690370D17BB27F6003E4643 /* HSUAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HSUAppDelegate.h; sourceTree = "<group>"; };
+		9690370E17BB27F6003E4643 /* HSUAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSUAppDelegate.m; sourceTree = "<group>"; };
+		9690371117BB27F6003E4643 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9690371317BB27F6003E4643 /* HSUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HSUViewController.h; sourceTree = "<group>"; };
+		9690371417BB27F6003E4643 /* HSUViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSUViewController.m; sourceTree = "<group>"; };
+		9690371617BB27F6003E4643 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		9690371D17BB27F6003E4643 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		9690372517BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AudioStreamPlayer-Demo-iOSTests-Info.plist"; sourceTree = "<group>"; };
+		9690372717BB27F6003E4643 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9690372917BB27F6003E4643 /* AudioStreamPlayer_Demo_iOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioStreamPlayer_Demo_iOSTests.m; sourceTree = "<group>"; };
+		9690373917BB2867003E4643 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		9690373B17BB2888003E4643 /* libAudioStreamPlayer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAudioStreamPlayer.a; path = "../../AudioStreamPlayer/AudioStreamPlayer/build/Debug-iphoneos/libAudioStreamPlayer.a"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		969036F817BB27F6003E4643 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9690373C17BB2888003E4643 /* libAudioStreamPlayer.a in Frameworks */,
+				9690373A17BB2867003E4643 /* AVFoundation.framework in Frameworks */,
+				9690370117BB27F6003E4643 /* CoreGraphics.framework in Frameworks */,
+				9690370317BB27F6003E4643 /* UIKit.framework in Frameworks */,
+				969036FF17BB27F6003E4643 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		969036F217BB27F6003E4643 = {
+			isa = PBXGroup;
+			children = (
+				9690370417BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS */,
+				9690372317BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests */,
+				969036FD17BB27F6003E4643 /* Frameworks */,
+				969036FC17BB27F6003E4643 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		969036FC17BB27F6003E4643 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				969036FB17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		969036FD17BB27F6003E4643 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9690373B17BB2888003E4643 /* libAudioStreamPlayer.a */,
+				9690373917BB2867003E4643 /* AVFoundation.framework */,
+				969036FE17BB27F6003E4643 /* Foundation.framework */,
+				9690370017BB27F6003E4643 /* CoreGraphics.framework */,
+				9690370217BB27F6003E4643 /* UIKit.framework */,
+				9690371D17BB27F6003E4643 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9690370417BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				9690370D17BB27F6003E4643 /* HSUAppDelegate.h */,
+				9690370E17BB27F6003E4643 /* HSUAppDelegate.m */,
+				9690371017BB27F6003E4643 /* Main.storyboard */,
+				9690371317BB27F6003E4643 /* HSUViewController.h */,
+				9690371417BB27F6003E4643 /* HSUViewController.m */,
+				9690371617BB27F6003E4643 /* Images.xcassets */,
+				9690370517BB27F6003E4643 /* Supporting Files */,
+			);
+			path = "AudioStreamPlayer-Demo-iOS";
+			sourceTree = "<group>";
+		};
+		9690370517BB27F6003E4643 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9690370617BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS-Info.plist */,
+				9690370717BB27F6003E4643 /* InfoPlist.strings */,
+				9690370A17BB27F6003E4643 /* main.m */,
+				9690370C17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9690372317BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				9690372917BB27F6003E4643 /* AudioStreamPlayer_Demo_iOSTests.m */,
+				9690372417BB27F6003E4643 /* Supporting Files */,
+			);
+			path = "AudioStreamPlayer-Demo-iOSTests";
+			sourceTree = "<group>";
+		};
+		9690372417BB27F6003E4643 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9690372517BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests-Info.plist */,
+				9690372617BB27F6003E4643 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		969036FA17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9690372D17BB27F6003E4643 /* Build configuration list for PBXNativeTarget "AudioStreamPlayer-Demo-iOS" */;
+			buildPhases = (
+				969036F717BB27F6003E4643 /* Sources */,
+				969036F817BB27F6003E4643 /* Frameworks */,
+				969036F917BB27F6003E4643 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AudioStreamPlayer-Demo-iOS";
+			productName = "AudioStreamPlayer-Demo-iOS";
+			productReference = 969036FB17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		969036F317BB27F6003E4643 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = HSU;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Jason Hsu";
+			};
+			buildConfigurationList = 969036F617BB27F6003E4643 /* Build configuration list for PBXProject "AudioStreamPlayer-Demo-iOS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 969036F217BB27F6003E4643;
+			productRefGroup = 969036FC17BB27F6003E4643 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				969036FA17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		969036F917BB27F6003E4643 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9690371717BB27F6003E4643 /* Images.xcassets in Resources */,
+				9690370917BB27F6003E4643 /* InfoPlist.strings in Resources */,
+				9690371217BB27F6003E4643 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		969036F717BB27F6003E4643 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9690370B17BB27F6003E4643 /* main.m in Sources */,
+				9690371517BB27F6003E4643 /* HSUViewController.m in Sources */,
+				9690370F17BB27F6003E4643 /* HSUAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		9690370717BB27F6003E4643 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9690370817BB27F6003E4643 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		9690371017BB27F6003E4643 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9690371117BB27F6003E4643 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		9690372617BB27F6003E4643 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9690372717BB27F6003E4643 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9690372B17BB27F6003E4643 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		9690372C17BB27F6003E4643 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9690372E17BB27F6003E4643 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AudioStreamPlayer-Demo-iOS/AudioStreamPlayer-Demo-iOS-Prefix.pch";
+				INFOPLIST_FILE = "AudioStreamPlayer-Demo-iOS/AudioStreamPlayer-Demo-iOS-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../AudioStreamPlayer/\"";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		9690372F17BB27F6003E4643 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AudioStreamPlayer-Demo-iOS/AudioStreamPlayer-Demo-iOS-Prefix.pch";
+				INFOPLIST_FILE = "AudioStreamPlayer-Demo-iOS/AudioStreamPlayer-Demo-iOS-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../AudioStreamPlayer/\"";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		969036F617BB27F6003E4643 /* Build configuration list for PBXProject "AudioStreamPlayer-Demo-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9690372B17BB27F6003E4643 /* Debug */,
+				9690372C17BB27F6003E4643 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9690372D17BB27F6003E4643 /* Build configuration list for PBXNativeTarget "AudioStreamPlayer-Demo-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9690372E17BB27F6003E4643 /* Debug */,
+				9690372F17BB27F6003E4643 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 969036F317BB27F6003E4643 /* Project object */;
+}

@@ -1,0 +1,330 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		969036CD17BB27A3003E4643 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 969036CC17BB27A3003E4643 /* Foundation.framework */; };
+		969036D217BB27A3003E4643 /* HSUAudioStreamPlayer.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 969036D117BB27A3003E4643 /* HSUAudioStreamPlayer.h */; };
+		969036D417BB27A3003E4643 /* HSUAudioStreamPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 969036D317BB27A3003E4643 /* HSUAudioStreamPlayer.m */; };
+		9690373617BB284E003E4643 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9690373317BB284E003E4643 /* AudioToolbox.framework */; };
+		9690373717BB284E003E4643 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9690373417BB284E003E4643 /* AVFoundation.framework */; };
+		9690373817BB284E003E4643 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9690373517BB284E003E4643 /* CFNetwork.framework */; };
+		9690374917BB2A64003E4643 /* HSUAudioCacheControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9690373E17BB2A64003E4643 /* HSUAudioCacheControl.m */; };
+		9690374A17BB2A64003E4643 /* HSUAudioDataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 9690374017BB2A64003E4643 /* HSUAudioDataProvider.m */; };
+		9690374B17BB2A64003E4643 /* HSUAudioNetworkControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9690374217BB2A64003E4643 /* HSUAudioNetworkControl.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		969036C717BB27A3003E4643 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				969036D217BB27A3003E4643 /* HSUAudioStreamPlayer.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		969036C917BB27A3003E4643 /* libAudioStreamPlayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAudioStreamPlayer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		969036CC17BB27A3003E4643 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		969036D017BB27A3003E4643 /* AudioStreamPlayer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AudioStreamPlayer-Prefix.pch"; sourceTree = "<group>"; };
+		969036D117BB27A3003E4643 /* HSUAudioStreamPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HSUAudioStreamPlayer.h; sourceTree = "<group>"; };
+		969036D317BB27A3003E4643 /* HSUAudioStreamPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSUAudioStreamPlayer.m; sourceTree = "<group>"; };
+		969036DA17BB27A3003E4643 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		969036DD17BB27A3003E4643 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		969036E417BB27A3003E4643 /* AudioStreamPlayerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AudioStreamPlayerTests-Info.plist"; sourceTree = "<group>"; };
+		969036E617BB27A3003E4643 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		969036E817BB27A3003E4643 /* AudioStreamPlayerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioStreamPlayerTests.m; sourceTree = "<group>"; };
+		9690373317BB284E003E4643 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		9690373417BB284E003E4643 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		9690373517BB284E003E4643 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		9690373D17BB2A64003E4643 /* HSUAudioCacheControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSUAudioCacheControl.h; sourceTree = "<group>"; };
+		9690373E17BB2A64003E4643 /* HSUAudioCacheControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSUAudioCacheControl.m; sourceTree = "<group>"; };
+		9690373F17BB2A64003E4643 /* HSUAudioDataProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSUAudioDataProvider.h; sourceTree = "<group>"; };
+		9690374017BB2A64003E4643 /* HSUAudioDataProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSUAudioDataProvider.m; sourceTree = "<group>"; };
+		9690374117BB2A64003E4643 /* HSUAudioNetworkControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSUAudioNetworkControl.h; sourceTree = "<group>"; };
+		9690374217BB2A64003E4643 /* HSUAudioNetworkControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSUAudioNetworkControl.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		969036C617BB27A3003E4643 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9690373617BB284E003E4643 /* AudioToolbox.framework in Frameworks */,
+				9690373717BB284E003E4643 /* AVFoundation.framework in Frameworks */,
+				9690373817BB284E003E4643 /* CFNetwork.framework in Frameworks */,
+				969036CD17BB27A3003E4643 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		969036C017BB27A3003E4643 = {
+			isa = PBXGroup;
+			children = (
+				969036CE17BB27A3003E4643 /* AudioStreamPlayer */,
+				969036E217BB27A3003E4643 /* AudioStreamPlayerTests */,
+				969036CB17BB27A3003E4643 /* Frameworks */,
+				969036CA17BB27A3003E4643 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		969036CA17BB27A3003E4643 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				969036C917BB27A3003E4643 /* libAudioStreamPlayer.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		969036CB17BB27A3003E4643 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9690373317BB284E003E4643 /* AudioToolbox.framework */,
+				9690373417BB284E003E4643 /* AVFoundation.framework */,
+				9690373517BB284E003E4643 /* CFNetwork.framework */,
+				969036CC17BB27A3003E4643 /* Foundation.framework */,
+				969036DA17BB27A3003E4643 /* XCTest.framework */,
+				969036DD17BB27A3003E4643 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		969036CE17BB27A3003E4643 /* AudioStreamPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				969036D117BB27A3003E4643 /* HSUAudioStreamPlayer.h */,
+				969036D317BB27A3003E4643 /* HSUAudioStreamPlayer.m */,
+				9690373D17BB2A64003E4643 /* HSUAudioCacheControl.h */,
+				9690373E17BB2A64003E4643 /* HSUAudioCacheControl.m */,
+				9690373F17BB2A64003E4643 /* HSUAudioDataProvider.h */,
+				9690374017BB2A64003E4643 /* HSUAudioDataProvider.m */,
+				9690374117BB2A64003E4643 /* HSUAudioNetworkControl.h */,
+				9690374217BB2A64003E4643 /* HSUAudioNetworkControl.m */,
+				969036CF17BB27A3003E4643 /* Supporting Files */,
+			);
+			path = AudioStreamPlayer;
+			sourceTree = "<group>";
+		};
+		969036CF17BB27A3003E4643 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				969036D017BB27A3003E4643 /* AudioStreamPlayer-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		969036E217BB27A3003E4643 /* AudioStreamPlayerTests */ = {
+			isa = PBXGroup;
+			children = (
+				969036E817BB27A3003E4643 /* AudioStreamPlayerTests.m */,
+				969036E317BB27A3003E4643 /* Supporting Files */,
+			);
+			path = AudioStreamPlayerTests;
+			sourceTree = "<group>";
+		};
+		969036E317BB27A3003E4643 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				969036E417BB27A3003E4643 /* AudioStreamPlayerTests-Info.plist */,
+				969036E517BB27A3003E4643 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		969036C817BB27A3003E4643 /* AudioStreamPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 969036EC17BB27A3003E4643 /* Build configuration list for PBXNativeTarget "AudioStreamPlayer" */;
+			buildPhases = (
+				969036C517BB27A3003E4643 /* Sources */,
+				969036C617BB27A3003E4643 /* Frameworks */,
+				969036C717BB27A3003E4643 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AudioStreamPlayer;
+			productName = AudioStreamPlayer;
+			productReference = 969036C917BB27A3003E4643 /* libAudioStreamPlayer.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		969036C117BB27A3003E4643 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "Jason Hsu";
+			};
+			buildConfigurationList = 969036C417BB27A3003E4643 /* Build configuration list for PBXProject "AudioStreamPlayer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 969036C017BB27A3003E4643;
+			productRefGroup = 969036CA17BB27A3003E4643 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				969036C817BB27A3003E4643 /* AudioStreamPlayer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		969036C517BB27A3003E4643 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9690374B17BB2A64003E4643 /* HSUAudioNetworkControl.m in Sources */,
+				9690374917BB2A64003E4643 /* HSUAudioCacheControl.m in Sources */,
+				969036D417BB27A3003E4643 /* HSUAudioStreamPlayer.m in Sources */,
+				9690374A17BB2A64003E4643 /* HSUAudioDataProvider.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		969036E517BB27A3003E4643 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				969036E617BB27A3003E4643 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		969036EA17BB27A3003E4643 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		969036EB17BB27A3003E4643 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		969036ED17BB27A3003E4643 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/AudioStreamPlayer.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AudioStreamPlayer/AudioStreamPlayer-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		969036EE17BB27A3003E4643 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/AudioStreamPlayer.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "AudioStreamPlayer/AudioStreamPlayer-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		969036C417BB27A3003E4643 /* Build configuration list for PBXProject "AudioStreamPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				969036EA17BB27A3003E4643 /* Debug */,
+				969036EB17BB27A3003E4643 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		969036EC17BB27A3003E4643 /* Build configuration list for PBXNativeTarget "AudioStreamPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				969036ED17BB27A3003E4643 /* Debug */,
+				969036EE17BB27A3003E4643 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 969036C117BB27A3003E4643 /* Project object */;
+}
