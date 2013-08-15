@@ -36,9 +36,6 @@
 		9690371417BB27F6003E4643 /* HSUViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSUViewController.m; sourceTree = "<group>"; };
 		9690371617BB27F6003E4643 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		9690371D17BB27F6003E4643 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		9690372517BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AudioStreamPlayer-Demo-iOSTests-Info.plist"; sourceTree = "<group>"; };
-		9690372717BB27F6003E4643 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		9690372917BB27F6003E4643 /* AudioStreamPlayer_Demo_iOSTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioStreamPlayer_Demo_iOSTests.m; sourceTree = "<group>"; };
 		9690373917BB2867003E4643 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		9690373B17BB2888003E4643 /* libAudioStreamPlayer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAudioStreamPlayer.a; path = "../../AudioStreamPlayer/AudioStreamPlayer/build/Debug-iphoneos/libAudioStreamPlayer.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -63,7 +60,6 @@
 			isa = PBXGroup;
 			children = (
 				9690370417BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS */,
-				9690372317BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests */,
 				969036FD17BB27F6003E4643 /* Frameworks */,
 				969036FC17BB27F6003E4643 /* Products */,
 			);
@@ -111,24 +107,6 @@
 				9690370717BB27F6003E4643 /* InfoPlist.strings */,
 				9690370A17BB27F6003E4643 /* main.m */,
 				9690370C17BB27F6003E4643 /* AudioStreamPlayer-Demo-iOS-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		9690372317BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				9690372917BB27F6003E4643 /* AudioStreamPlayer_Demo_iOSTests.m */,
-				9690372417BB27F6003E4643 /* Supporting Files */,
-			);
-			path = "AudioStreamPlayer-Demo-iOSTests";
-			sourceTree = "<group>";
-		};
-		9690372417BB27F6003E4643 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				9690372517BB27F6003E4643 /* AudioStreamPlayer-Demo-iOSTests-Info.plist */,
-				9690372617BB27F6003E4643 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -222,14 +200,6 @@
 				9690371117BB27F6003E4643 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		9690372617BB27F6003E4643 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9690372717BB27F6003E4643 /* en */,
-			);
-			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

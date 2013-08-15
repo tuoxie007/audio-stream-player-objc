@@ -39,9 +39,6 @@
 		969036D317BB27A3003E4643 /* HSUAudioStreamPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSUAudioStreamPlayer.m; sourceTree = "<group>"; };
 		969036DA17BB27A3003E4643 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		969036DD17BB27A3003E4643 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		969036E417BB27A3003E4643 /* AudioStreamPlayerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AudioStreamPlayerTests-Info.plist"; sourceTree = "<group>"; };
-		969036E617BB27A3003E4643 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		969036E817BB27A3003E4643 /* AudioStreamPlayerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AudioStreamPlayerTests.m; sourceTree = "<group>"; };
 		9690373317BB284E003E4643 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		9690373417BB284E003E4643 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		9690373517BB284E003E4643 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -72,7 +69,6 @@
 			isa = PBXGroup;
 			children = (
 				969036CE17BB27A3003E4643 /* AudioStreamPlayer */,
-				969036E217BB27A3003E4643 /* AudioStreamPlayerTests */,
 				969036CB17BB27A3003E4643 /* Frameworks */,
 				969036CA17BB27A3003E4643 /* Products */,
 			);
@@ -119,24 +115,6 @@
 			isa = PBXGroup;
 			children = (
 				969036D017BB27A3003E4643 /* AudioStreamPlayer-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		969036E217BB27A3003E4643 /* AudioStreamPlayerTests */ = {
-			isa = PBXGroup;
-			children = (
-				969036E817BB27A3003E4643 /* AudioStreamPlayerTests.m */,
-				969036E317BB27A3003E4643 /* Supporting Files */,
-			);
-			path = AudioStreamPlayerTests;
-			sourceTree = "<group>";
-		};
-		969036E317BB27A3003E4643 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				969036E417BB27A3003E4643 /* AudioStreamPlayerTests-Info.plist */,
-				969036E517BB27A3003E4643 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -200,17 +178,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		969036E517BB27A3003E4643 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				969036E617BB27A3003E4643 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		969036EA17BB27A3003E4643 /* Debug */ = {
