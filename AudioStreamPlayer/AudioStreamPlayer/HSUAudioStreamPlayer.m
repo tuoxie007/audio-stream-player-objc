@@ -254,7 +254,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
                     AudioQueueStart(_audioQueue, 0);
                     self.state = HSU_AS_PLAYING;
                 }
-                if (_audioQueue && _isRunning) {
+                if (_audioQueue) {
                     AudioQueueFlush(_audioQueue);
                     CheckErr(AudioQueueStop(_audioQueue, false));
                 }
