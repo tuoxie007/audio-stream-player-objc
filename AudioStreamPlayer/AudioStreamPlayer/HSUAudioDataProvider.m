@@ -40,6 +40,9 @@
 
 - (NSData *)readBufferWithMaxLength:(NSUInteger)maxLength
 {
+    if (self.contentLength && self.contentLength <= _byteOffset) {
+        return nil;
+    }
     if (_cacheFilePath && !_cacheControl) {
         _cacheControl = [[HSUAudioCacheControl alloc]
                          initWithCacheFilePath:_cacheFilePath
@@ -63,10 +66,10 @@
             [_cacheControl writeCacheData:buffer
                                fromOffset:_byteOffset];
         }
-//        NSLog(@"read network %u", _byteOffset/1024);
+        NSLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
     } else {
         _networkControl = nil;
-//        NSLog(@"read cache %u", _byteOffset/1024);
+        NSLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
     }
     _byteOffset += buffer.length;
     

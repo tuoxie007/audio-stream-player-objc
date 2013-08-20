@@ -166,7 +166,7 @@
             NSUInteger startOffset = [aRange[0] unsignedIntegerValue];
             NSUInteger endOffset = [aRange[1] unsignedIntegerValue];
             
-            if (startOffset <= fromOffset && endOffset > fromOffset + maxLength) {
+            if (startOffset <= fromOffset && endOffset > fromOffset) {
                 [_reader seekToFileOffset:fromOffset];
                 return [_reader readDataOfLength:MIN(maxLength, endOffset - fromOffset)];
             }

@@ -48,10 +48,11 @@ NSString *md5Hash (NSString *str);
 }
 
 - (IBAction)progressDragStarted:(id)sender {
-    [self.progressTimer invalidate];
+    [self stopProgressMonitor];
 }
 
 - (IBAction)progressChanged:(id)sender {
+    [self startProgressMonitor];
     UISlider *slider = sender;
     double duration = self.player.duration;
     [self.player seekToTime:slider.value * duration];

@@ -114,7 +114,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
             _bufferByteSize >= _bufferSize * 3 &&
             _bufferByteSize <= _bufferSize * kMaxBufferQueueSize) {
             _bufferQueueSize = _bufferByteSize / _bufferSize;
-        } else {
+        } else if (_bufferByteSize) {
             Log(@"bufferByteSize invalid, use default %u", _bufferSize * _bufferQueueSize);
         }
         
@@ -172,7 +172,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
         pthread_cond_signal(&_bufferCond);
         pthread_mutex_unlock(&_bufferMutex);
         
-        if (_readEnd && _isRunning) {
+        if (_readEnd && _isRunning && _state != HSU_AS_PAUSED) {
             [self _start];
         }
     }
@@ -250,6 +250,10 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
             } else {
                 _readEnd = YES;
                 _dataProvider = nil;
+                if (_audioQueue) {
+                    AudioQueueStart(_audioQueue, 0);
+                    self.state = HSU_AS_PLAYING;
+                }
                 if (_audioQueue && _isRunning) {
                     AudioQueueFlush(_audioQueue);
                     CheckErr(AudioQueueStop(_audioQueue, false));
@@ -268,7 +272,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 {
     if (!_audioQueue) {
         [self _createQueue];
-        CheckErr(AudioQueueStart(_audioQueue, NULL));
+//        CheckErr(AudioQueueStart(_audioQueue, NULL));
     }
     
     NSUInteger bufferIndex = _enqueuedBufferCount % _bufferQueueSize;
@@ -290,10 +294,8 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
     
     pthread_mutex_lock(&_bufferMutex);
     while (_enqueuedBufferCount - _dequeuedBufferCount >= _bufferQueueSize - kMinBufferQueueSize) {
-        if (self.state == HSU_AS_WAITTING) {
-            AudioQueueStart(_audioQueue, 0);
-            self.state = HSU_AS_PLAYING;
-        }
+        AudioQueueStart(_audioQueue, 0);
+        self.state = HSU_AS_PLAYING;
         pthread_cond_wait(&_bufferCond, &_bufferMutex);
     }
     //    Log(@"enqueue %u", _enqueuedBufferCount);
@@ -344,6 +346,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
                 self.state = HSU_AS_STOPPED;
             }
         } else {
+            Log(@"set state playing");
             self.state = HSU_AS_PLAYING;
         }
     }
