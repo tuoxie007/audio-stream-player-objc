@@ -250,14 +250,13 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
             } else {
                 _readEnd = YES;
                 _dataProvider = nil;
-                if (_audioQueue) {
-                    AudioQueueStart(_audioQueue, 0);
-                    self.state = HSU_AS_PLAYING;
+                if (!_audioQueue) {
+                    [self _createQueue];
                 }
-                if (_audioQueue) {
-                    AudioQueueFlush(_audioQueue);
-                    CheckErr(AudioQueueStop(_audioQueue, false));
-                }
+                AudioQueueStart(_audioQueue, 0);
+                self.state = HSU_AS_PLAYING;
+                AudioQueueFlush(_audioQueue);
+                AudioQueueStop(_audioQueue, false);
                 break;
             }
         }
