@@ -131,10 +131,14 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 {
     _userStop = NO;
     if (self.state == HSU_AS_PAUSED) {
-        CheckErr(AudioQueueStart(_audioQueue, NULL));
-        if (self.state == HSU_AS_PAUSED &&
-            _enqueuedBufferCount > _dequeuedBufferCount) {
-            self.state = HSU_AS_PLAYING;
+        err = AudioQueueStart(_audioQueue, NULL);
+        if (err == noErr) {
+            if (self.state == HSU_AS_PAUSED &&
+                _enqueuedBufferCount > _dequeuedBufferCount) {
+                self.state = HSU_AS_PLAYING;
+            }
+        } else {
+            LogErr(err);
         }
     } else {
         [self _start];
@@ -250,14 +254,18 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
             } else {
                 _readEnd = YES;
                 _dataProvider = nil;
+                
+                // Flush tail
                 if (!_audioQueue) {
                     [self _createQueue];
                 }
-                AudioQueueStart(_audioQueue, 0);
-                self.state = HSU_AS_PLAYING;
-                AudioQueueFlush(_audioQueue);
-                AudioQueueStop(_audioQueue, false);
-                break;
+                if (_audioQueue) {
+                    AudioQueueStart(_audioQueue, 0);
+                    self.state = HSU_AS_PLAYING;
+                    AudioQueueFlush(_audioQueue);
+                    AudioQueueStop(_audioQueue, false);
+                    break;
+                }
             }
         }
     }
@@ -271,7 +279,6 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 {
     if (!_audioQueue) {
         [self _createQueue];
-//        CheckErr(AudioQueueStart(_audioQueue, NULL));
     }
     
     NSUInteger bufferIndex = _enqueuedBufferCount % _bufferQueueSize;
@@ -404,6 +411,9 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 
 - (void)_createQueue
 {
+    if (!_asbd.mSampleRate) {
+        return;
+    }
 	_streamDesc.sampleRate = _asbd.mSampleRate;
 	
     CheckErr(AudioQueueNewOutput(&_asbd,

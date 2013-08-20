@@ -31,6 +31,15 @@
         abort(); \
     }
 
+#define LogErr(err) \
+    if (err != noErr) { \
+        NSLog(@"Error %d, %c%c%c%c", \
+        (int)err, \
+        ((char *)&err)[3], \
+        ((char *)&err)[2], \
+        ((char *)&err)[1], \
+        ((char *)&err)[0]); \
+    }
 
 typedef struct HSUAudioStreamDescription {
     double bitrate;
