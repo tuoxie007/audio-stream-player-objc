@@ -23,4 +23,6 @@
 
 - (void)updateMetaWithContentLength:(NSUInteger)contentLength;
 
++ (BOOL)isCacheCompletedForCachePath:(NSString *)cachePath;
+
 @end

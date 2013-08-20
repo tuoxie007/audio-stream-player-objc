@@ -7,6 +7,7 @@
 //
 
 #import "HSUAudioCacheControl.h"
+#import "HSUAudioStreamPlayer.h"
 
 @interface HSUAudioCacheMeta : NSObject
 
@@ -208,6 +209,24 @@
         return _contentLength;
     }
     return [_meta.contentLength unsignedIntegerValue];
+}
+
++ (BOOL)isCacheCompletedForCachePath:(NSString *)cachePath
+{
+    NSString *metaPath = [NSString stringWithFormat:@"%@.meta", cachePath];
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
+        return NO;
+    }
+    if (![[NSFileManager defaultManager] fileExistsAtPath:metaPath]) {
+        return NO;
+    }
+    HSUAudioCacheMeta *meta = [HSUAudioCacheMeta readFromFile:metaPath];
+    if (meta.ranges.count != 1) {
+        return NO;
+    }
+    return [meta.ranges[0][1] unsignedIntegerValue] ==
+            [meta.contentLength unsignedIntegerValue];
 }
 
 @end

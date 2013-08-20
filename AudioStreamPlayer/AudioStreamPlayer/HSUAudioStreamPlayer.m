@@ -77,7 +77,9 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
     
     AudioFileStreamID _audioFileStream;
     AudioQueueRef _audioQueue;
+    UInt32 _isRunning;
     AudioStreamBasicDescription _asbd;
+    AudioQueueLevelMeterState *_meterStateOfChannels;
     
     HSUAudioStreamPlayBackState _state;
     dispatch_queue_t _dataEnqueueDP;
@@ -108,6 +110,13 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
         
         _bufferQueueSize = kMaxBufferQueueSize;
         _bufferSize = kMaxBufferSize;
+        if (_bufferByteSize &&
+            _bufferByteSize >= _bufferSize * 3 &&
+            _bufferByteSize <= _bufferSize * kMaxBufferQueueSize) {
+            _bufferQueueSize = _bufferByteSize / _bufferSize;
+        } else {
+            Log(@"bufferByteSize invalid, use default %u", _bufferSize * _bufferQueueSize);
+        }
         
         pthread_mutex_init(&_bufferMutex, NULL);
         pthread_cond_init(&_bufferCond, NULL);
@@ -135,9 +144,8 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 - (void)stop
 {
     _userStop = YES;
-    if (_audioQueue) {
+    if (_audioQueue && _isRunning) {
         CheckErr(AudioQueueStop(_audioQueue, YES));
-        _audioQueue = nil;
     } else {
         _seekByteOffset = 0;
         _seekTime = 0;
@@ -163,6 +171,10 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
         pthread_mutex_lock(&_bufferMutex);
         pthread_cond_signal(&_bufferCond);
         pthread_mutex_unlock(&_bufferMutex);
+        
+        if (_readEnd && _isRunning) {
+            [self _start];
+        }
     }
 }
 
@@ -196,9 +208,8 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
                                     &packetAlignedByteOffset,
                                     &ioFlags);
                 
-                if (_audioQueue) {
+                if (_audioQueue && _isRunning) {
                     CheckErr(AudioQueueStop(_audioQueue, YES));
-                    _audioQueue = nil;
                 }
                 _dataProvider = nil;
             }
@@ -209,6 +220,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
                                  cacheFilePath:_cacheFilePath
                                  byteOffset:_seekByteOffset];
                 _seekByteOffset = 0;
+                _audioQueue = nil;
                 
                 [[NSNotificationCenter defaultCenter]
                  addObserver:self
@@ -225,7 +237,6 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
             }
             _readingData = NO;
             if (data.length) {
-//            Log(@"data %u", data.length);
                 if (!_audioFileStream) {
                     CheckErr(AudioFileStreamOpen((__bridge void *)self,
                                                  HSUAudioFileStreamPropertyListener,
@@ -239,10 +250,9 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
             } else {
                 _readEnd = YES;
                 _dataProvider = nil;
-                if (_audioQueue) {
+                if (_audioQueue && _isRunning) {
                     AudioQueueFlush(_audioQueue);
                     CheckErr(AudioQueueStop(_audioQueue, false));
-                    _audioQueue = nil;
                 }
                 break;
             }
@@ -315,10 +325,9 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 {
     if (pid == kAudioQueueProperty_IsRunning)
     {
-        UInt32 isRunning = 0;
         UInt32 size = sizeof(UInt32);
-        AudioQueueGetProperty(_audioQueue, pid, &isRunning, &size);
-        if (isRunning == 0) {
+        AudioQueueGetProperty(_audioQueue, pid, &_isRunning, &size);
+        if (_isRunning == 0) {
             // reset variables
             _readPacketsNumber = 0;
             _readBytesNumber = 0;
@@ -374,7 +383,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 - (void)setState:(HSUAudioStreamPlayBackState)state
 {
     if (_state != state) {
-//        Log(@"state %@", stateText(state));
+        Log(@"state %@", stateText(state));
         dispatch_async(dispatch_get_main_queue(), ^{
             _state = state;
             [[NSNotificationCenter defaultCenter]
@@ -495,9 +504,9 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
                                                 kAudioFileStreamProperty_DataFormat,
                                                 &asbdSize,
                                                 &_asbd));
-            AudioQueueLevelMeterState *meterStateOfChannels =
+            _meterStateOfChannels =
             (AudioQueueLevelMeterState *)malloc(sizeof(AudioQueueLevelMeterState) *_asbd.mChannelsPerFrame);
-            memset(meterStateOfChannels, 0, sizeof(AudioQueueLevelMeterState) * _asbd.mChannelsPerFrame);
+            memset(_meterStateOfChannels, 0, sizeof(AudioQueueLevelMeterState) * _asbd.mChannelsPerFrame);
             _streamDesc.channels = _asbd.mChannelsPerFrame;
         }
     }
@@ -530,6 +539,18 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
         free(formatList);
     }
 }
+
+
+- (float)averagePowerForChannel:(int)channel
+{
+    if (_asbd.mChannelsPerFrame == 0) {
+        return 0;
+    }
+    UInt32 propertySize = sizeof(AudioQueueLevelMeterState) * _asbd.mChannelsPerFrame;
+    AudioQueueGetProperty(_audioQueue, kAudioQueueProperty_CurrentLevelMeterDB, _meterStateOfChannels, &propertySize);
+    return _meterStateOfChannels[channel].mAveragePower;
+}
+
 
 @end
 

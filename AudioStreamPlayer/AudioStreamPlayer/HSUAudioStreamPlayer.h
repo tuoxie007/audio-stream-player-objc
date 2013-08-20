@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
-#define NETWORK_TIMEOUT 60
-
 #define HSUAudioStreamPlayerStateChanged (@"HSUAudioStreamPlayerStateChanged")
 
 
@@ -61,6 +59,7 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 @property (nonatomic, assign) BOOL useSoftwareCodec;
 @property (nonatomic, assign) BOOL enableLevelMetering;
 @property (nonatomic, copy) NSString *audioSessionCategory;
+@property (nonatomic, assign) NSUInteger bufferByteSize; // bytes, 3 ~ 300
 
 /*!
  * @description
@@ -96,5 +95,6 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 - (double)currentTime;
 - (double)progress;
 - (double)duration;
+- (float)averagePowerForChannel:(int)channel;
 
 @end

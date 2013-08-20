@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define NETWORK_TIMEOUT 60
+
 @interface HSUAudioNetworkControl : NSObject
 
 @property (nonatomic, assign) NSUInteger contentLength;
