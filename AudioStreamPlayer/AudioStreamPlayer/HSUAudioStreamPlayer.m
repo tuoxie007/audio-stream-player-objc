@@ -551,6 +551,18 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
     return _meterStateOfChannels[channel].mAveragePower;
 }
 
+- (float)currentVolume
+{
+    float power = 0;
+    for (int i=0; i<_asbd.mChannelsPerFrame; i++) {
+        float channelPower = powf(10, [self averagePowerForChannel:0] / 2 / 20);
+        if (channelPower < 1) {
+            power += channelPower;
+        }
+    }
+    return power / _asbd.mChannelsPerFrame;
+}
+
 
 @end
 

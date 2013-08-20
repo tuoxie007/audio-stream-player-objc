@@ -95,6 +95,6 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 - (double)currentTime;
 - (double)progress;
 - (double)duration;
-- (float)averagePowerForChannel:(int)channel;
+- (float)currentVolume;
 
 @end

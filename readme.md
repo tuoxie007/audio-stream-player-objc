@@ -1,13 +1,13 @@
 # Audio Stream Player for Objective-C
 Note: Build on Xcode 5
 
-## Basic usage
+## Basic
     self.player = [[HSUAudioStreamPlayer alloc]
                    initWithURL:[NSURL URLWithString:@"http://goo.gl/ATX7Ea"]
                    cacheFilePath:nil];
 	[self.player play];
 
-## Advanced usages
+## Advanced
 ![](https://dl.dropboxusercontent.com/s/4arz05ulf14hnf8/asp-screenshot-01.png?token_hash=AAE98ePdAgKkHXSxHmU15_9HoOYJjbNvc3E49zgUhfFoPQ&dl=1 "Demo Screenshot")
 
 ### Player for HTTP URL
@@ -57,7 +57,7 @@ Note: Build on Xcode 5
     else if (state == HSU_AS_FINISHED) {
         [self.player play];
     }
-### Seek (use HTTP Range)
+### Seek (open a new stream with HTTP Range)
     [self.player seekToTime:time];
 
 ### Work with recorder
@@ -65,9 +65,9 @@ Note: Build on Xcode 5
 	self.player = ...
     self.player.audioSessionCategory = 
     	AVAudioSessionCategoryPlayAndRecord;
-    	// AVAudioSessionCategoryPlayAndRecord as default
+    	// replace default value (AVAudioSessionCategoryPlayback)
     	
-	or control category yourself:
+	or control category by yourself:
     self.player.audioSessionCategory = nil;
     [[AVAudioSession sharedInstance]
      setCategory:AVAudioSessionCategoryPlayAndRecord
@@ -78,6 +78,11 @@ Note: Build on Xcode 5
 	double duration = self.player.duration;
     double progress = self.player.progress;
 	double currentTime = self.player.currentTime;
+	float volume = self.player.currentVolume;
+
+### Check cache completed
+	BOOL isCached = [HSUAudioCacheControl 
+	                 isCacheCompletedForCachePath:cacheFilePath]
 
 ## And more
 
