@@ -69,6 +69,7 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 @property (nonatomic, assign) BOOL enableLevelMetering;
 @property (nonatomic, copy) NSString *audioSessionCategory;
 @property (nonatomic, assign) NSUInteger bufferByteSize; // bytes, 3 ~ 300
+@property (nonatomic, assign) BOOL enableBlueTooth;
 
 /*!
  * @description

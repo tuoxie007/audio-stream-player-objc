@@ -16,6 +16,7 @@
 #define kMaxBufferQueueSize 300
 #define kMinBufferQueueSize 3
 #define kMaxPacketsNumber 512
+#define HSUAudioStreamPlayerInterrupted (@"HSUAudioStreamPlayerInterrupted")
 
 void HSUAudioFileStreamGetProperty(AudioFileStreamID stream, AudioFilePropertyID pid);
 UInt32 HSUAudioFileStreamGetPropertyUInt32(AudioFileStreamID stream, AudioFilePropertyID pid);
@@ -42,6 +43,9 @@ void HSUAudioPacketsCallback (void *						inClientData,
 void HSUAudioQueuePropertyChanged (void *                  inUserData,
                                    AudioQueueRef           inAQ,
                                    AudioQueuePropertyID    inID);
+
+void HSUAudioSessionInterrupted (__unused void * inClientData,
+                                 UInt32 inInterruptionState);
 
 @interface HSUAudioStreamPlayer ()
 
@@ -71,6 +75,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
     BOOL _readingData;
     BOOL _readEnd;
     BOOL _userStop;
+    BOOL _interrupted;
     
     NSUInteger _readPacketsNumber;
     NSUInteger _readBytesNumber;
@@ -103,6 +108,8 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
     NSAssert(url || cacheFilePath, @"one of url and cache should be not nil");
     self = [super init];
     if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterruption:) name:HSUAudioStreamPlayerInterrupted object:nil];
+        
         _audioSessionCategory = AVAudioSessionCategoryPlayback;
         _url = url;
         _cacheFilePath = [cacheFilePath copy];
@@ -129,6 +136,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 // Call on main thread
 - (void)play
 {
+    [[AVAudioSession sharedInstance] setActive:YES];
     _userStop = NO;
     if (self.state == HSU_AS_PAUSED) {
         err = AudioQueueStart(_audioQueue, NULL);
@@ -188,6 +196,17 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
         [[AVAudioSession sharedInstance]
          setCategory:self.audioSessionCategory
          error:nil];
+    }
+    
+    AudioSessionInitialize(NULL, NULL,
+                           HSUAudioSessionInterrupted,
+                           (__bridge void *)(self));
+    
+    if (self.enableBlueTooth) {
+        UInt32 enableBluetooth = true;
+        AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryEnableBluetoothInput,
+                                sizeof(enableBluetooth),
+                                &enableBluetooth);
     }
     
     dispatch_async(_dataEnqueueDP, ^{
@@ -554,6 +573,21 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
     }
 }
 
+- (void)handleInterruption:(NSNotification *)notification {
+    AudioQueuePropertyID inInterruptionState =
+    (AudioQueuePropertyID)[notification.object unsignedIntegerValue];
+	if (inInterruptionState == kAudioSessionBeginInterruption) {
+        if (self.state == HSU_AS_PLAYING) {
+            _interrupted = YES;
+            [self pause];
+        }
+	} else if (inInterruptionState == kAudioSessionEndInterruption) {
+        if (_interrupted) {
+            _interrupted = NO;
+            [self play];
+        }
+	}
+}
 
 - (float)averagePowerForChannel:(int)channel
 {
@@ -617,6 +651,14 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 {
     HSUAudioStreamPlayer *player = (__bridge HSUAudioStreamPlayer *)inUserData;
     [player handleAudioQueuePropertyChanged:inID];
+}
+
+void HSUAudioSessionInterrupted (void * inClientData,
+                                 UInt32 inInterruptionState)
+{
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:HSUAudioStreamPlayerInterrupted
+     object:@(inInterruptionState)];
 }
 
 NSString *stateText(HSUAudioStreamPlayBackState state)
