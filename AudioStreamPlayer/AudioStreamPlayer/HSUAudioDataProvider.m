@@ -66,10 +66,10 @@
             [_cacheControl writeCacheData:buffer
                                fromOffset:_byteOffset];
         }
-        //NSLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
+        NSLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
     } else {
         _networkControl = nil;
-        //NSLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
+        NSLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
     }
     _byteOffset += buffer.length;
     

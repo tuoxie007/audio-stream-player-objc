@@ -34,7 +34,7 @@
     err = arg; \
     if (err != noErr) { \
         LogErr(err); \
-        [[[UIAlertView alloc] initWithTitle:@"Error in Debug Mode" message:@"StreamPlayer Operation Failed.\nPlease Check Logs!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show]; \
+        self.state = HSU_AS_ERROR; \
     }
 #else
 #define CheckErr(arg) \
@@ -42,6 +42,10 @@
     if (err != noErr) { \
         LogErr(err); \
     }
+#endif
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6
+#define HSU_USE_IPHONE_6 (1)
 #endif
 
 typedef struct HSUAudioStreamDescription {

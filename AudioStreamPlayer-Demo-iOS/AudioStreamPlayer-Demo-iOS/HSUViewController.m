@@ -72,6 +72,7 @@ NSString *md5Hash (NSString *str);
          selector:@selector(playBackStateChanged:)
          name:HSUAudioStreamPlayerStateChanged
          object:self.player];
+        [self.player play];
     }
     else if (state == HSU_AS_PLAYING) {
         [self.player pause];
