@@ -47,7 +47,7 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 void HSUAudioSessionInterrupted (__unused void * inClientData,
                                  UInt32 inInterruptionState);
 
-@interface HSUAudioStreamPlayer ()
+@interface HSUAudioStreamPlayer () <UIAlertViewDelegate>
 
 @property (readwrite) HSUAudioStreamPlayBackState state;
 
@@ -611,6 +611,12 @@ void HSUAudioSessionInterrupted (__unused void * inClientData,
     return power / _asbd.mChannelsPerFrame;
 }
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+#ifdef DEBUG
+    abort();
+#endif
+}
 
 @end
 

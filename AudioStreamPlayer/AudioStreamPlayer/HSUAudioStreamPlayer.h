@@ -19,27 +19,30 @@
 #define Log(s,...)
 #endif
 
-#define CheckErr(arg) \
-    err = arg; \
-    if (err != noErr) { \
-        NSLog(@"Error %d, %c%c%c%c", \
-                (int)err, \
-                ((char *)&err)[3], \
-                ((char *)&err)[2], \
-                ((char *)&err)[1], \
-                ((char *)&err)[0]); \
-        abort(); \
-    }
-
 #define LogErr(err) \
     if (err != noErr) { \
-        NSLog(@"Error %d, %c%c%c%c", \
+        Log(@"Error %d, %c%c%c%c", \
         (int)err, \
         ((char *)&err)[3], \
         ((char *)&err)[2], \
         ((char *)&err)[1], \
         ((char *)&err)[0]); \
     }
+
+#ifdef DEBUG
+#define CheckErr(arg) \
+    err = arg; \
+    if (err != noErr) { \
+        LogErr(err); \
+        [[[UIAlertView alloc] initWithTitle:@"Error in Debug Mode" message:@"StreamPlayer Operation Failed.\nPlease Check Logs!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show]; \
+    }
+#else
+#define CheckErr(arg) \
+    err = arg; \
+    if (err != noErr) { \
+        LogErr(err); \
+    }
+#endif
 
 typedef struct HSUAudioStreamDescription {
     double bitrate;
