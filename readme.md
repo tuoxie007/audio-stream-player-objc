@@ -8,7 +8,10 @@ Note: Build on Xcode 5
 	[self.player play];
 
 ## Advanced
-![](https://dl.dropboxusercontent.com/s/4arz05ulf14hnf8/asp-screenshot-01.png?token_hash=AAE98ePdAgKkHXSxHmU15_9HoOYJjbNvc3E49zgUhfFoPQ&dl=1 "Demo Screenshot")
+
+![Demo Screenshot](demo.png)
+
+Figure 1-1. Demo screenshot
 
 ### Player for HTTP URL
     self.player = [[HSUAudioStreamPlayer alloc]
@@ -84,6 +87,8 @@ Note: Build on Xcode 5
 	BOOL isCached = [HSUAudioCacheControl 
 	                 isCacheCompletedForCachePath:cacheFilePath]
 
-## And more
+## How it works
 
-todo
+![Structure](structure.svg)
+
+Figure 1-2. Components and Data
