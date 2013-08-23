@@ -115,9 +115,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
         _cacheFilePath = [cacheFilePath copy];
         _dataEnqueueDP = dispatch_queue_create("me.tuoxie.audiostream", NULL);
         
-//        _bufferQueueSize = kMaxBufferQueueSize;
-//        _bufferSize = kMaxBufferSize;
-//        
+        _bufferSize = kMaxBufferSize;
+        
         pthread_mutex_init(&_bufferMutex, NULL);
         pthread_cond_init(&_bufferCond, NULL);
         
@@ -468,7 +467,6 @@ void HSUAudioSessionInterrupted (void * inClientData,
 		}
 	}
     
-    _bufferSize = kMaxBufferSize;
     _bufferQueueSize = kMaxBufferQueueSize;
     if (_bufferByteSize &&
         _bufferByteSize >= _bufferSize * 3 &&
