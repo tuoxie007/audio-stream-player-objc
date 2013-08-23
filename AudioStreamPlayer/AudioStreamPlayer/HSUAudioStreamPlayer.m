@@ -131,11 +131,11 @@ void HSUAudioSessionInterrupted (void * inClientData,
 {
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
     _userStop = NO;
-    if (self.state == HSU_AS_PAUSED) {
+    if (self.state == HSU_AS_PAUSED && _audioQueue) {
         err = AudioQueueStart(_audioQueue, NULL);
         if (err == noErr) {
-            if (self.state == HSU_AS_PAUSED &&
-                _enqueuedBufferCount > _dequeuedBufferCount) {
+            if (_enqueuedBufferCount > _dequeuedBufferCount ||
+                _readEnd || _readError) {
                 self.state = HSU_AS_PLAYING;
             }
         } else {
