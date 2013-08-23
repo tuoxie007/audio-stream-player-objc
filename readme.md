@@ -9,7 +9,7 @@ Note: Build on Xcode 5
 
 ## Advanced
 
-![Demo Screenshot](demo.png)
+![Demo Screenshot](https://raw.github.com/tuoxie007/audio-stream-player-objc/master/demo.png)
 
 Figure 1-1. Demo screenshot
 
@@ -89,6 +89,6 @@ Figure 1-1. Demo screenshot
 
 ## How it works
 
-![Structure](structure.svg)
+![Structure](https://raw.github.com/tuoxie007/audio-stream-player-objc/master/structure.svg)
 
 Figure 1-2. Components and Data
