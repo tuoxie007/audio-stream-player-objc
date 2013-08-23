@@ -139,7 +139,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
                 self.state = HSU_AS_PLAYING;
             }
         } else {
-            LogErr(err);
+            HLogErr(err);
         }
     } else {
         [self _start];
@@ -256,6 +256,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
                                  cacheFilePath:_cacheFilePath
                                  byteOffset:_seekByteOffset];
                 _seekByteOffset = 0;
+                AudioQueueDispose(_audioQueue, true);
                 _audioQueue = nil;
                 
                 [[NSNotificationCenter defaultCenter]

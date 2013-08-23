@@ -19,7 +19,7 @@
 #define HLog(s,...)
 #endif
 
-#define LogErr(err) \
+#define HLogErr(err) \
     if (err != noErr) { \
         HLog(@"Error %d, %c%c%c%c", \
         (int)err, \
@@ -33,14 +33,14 @@
 #define CheckErr(arg) \
     err = arg; \
     if (err != noErr) { \
-        LogErr(err); \
+        HLogErr(err); \
         self.state = HSU_AS_ERROR; \
     }
 #else
 #define CheckErr(arg) \
     err = arg; \
     if (err != noErr) { \
-        LogErr(err); \
+        HLogErr(err); \
     }
 #endif
 
