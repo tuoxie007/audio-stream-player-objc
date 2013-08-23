@@ -180,7 +180,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
         pthread_cond_signal(&_bufferCond);
         pthread_mutex_unlock(&_bufferMutex);
         
-        if (_readEnd && _isRunning && _state != HSU_AS_PAUSED) {
+        if ((_readEnd || _readError) && _isRunning && _state != HSU_AS_PAUSED) {
             [self _start];
         }
     }
@@ -302,8 +302,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
                     self.state = HSU_AS_PLAYING;
                     AudioQueueFlush(_audioQueue);
                     AudioQueueStop(_audioQueue, false);
-                    break;
                 }
+                break;
             }
         }
     }
