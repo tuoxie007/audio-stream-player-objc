@@ -115,26 +115,15 @@ void HSUAudioSessionInterrupted (void * inClientData,
         _cacheFilePath = [cacheFilePath copy];
         _dataEnqueueDP = dispatch_queue_create("me.tuoxie.audiostream", NULL);
         
-        _bufferQueueSize = kMaxBufferQueueSize;
-        _bufferSize = kMaxBufferSize;
-        
+//        _bufferQueueSize = kMaxBufferQueueSize;
+//        _bufferSize = kMaxBufferSize;
+//        
         pthread_mutex_init(&_bufferMutex, NULL);
         pthread_cond_init(&_bufferCond, NULL);
         
         self.state = HSU_AS_STOPPED;
     }
     return self;
-}
-
-- (void)setBufferByteSize:(NSUInteger)bufferByteSize
-{
-    if (bufferByteSize &&
-        bufferByteSize >= _bufferSize * 3 &&
-        bufferByteSize <= _bufferSize * kMaxBufferQueueSize) {
-        _bufferQueueSize = bufferByteSize / _bufferSize;
-    } else if (_bufferByteSize) {
-        Log(@"bufferByteSize invalid, use default %u", _bufferSize * _bufferQueueSize);
-    }
 }
 
 // Call on main thread
@@ -478,9 +467,17 @@ void HSUAudioSessionInterrupted (void * inClientData,
             _bufferSize = kMaxBufferSize;
 		}
 	}
-    // todo: about buffer size
+    
     _bufferSize = kMaxBufferSize;
     _bufferQueueSize = kMaxBufferQueueSize;
+    if (_bufferByteSize &&
+        _bufferByteSize >= _bufferSize * 3 &&
+        _bufferByteSize <= _bufferSize * kMaxBufferQueueSize) {
+        _bufferQueueSize = _bufferByteSize / _bufferSize;
+    } else if (_bufferByteSize) {
+        Log(@"bufferByteSize invalid, use default %u", _bufferSize * _bufferQueueSize);
+    }
+    
     for (int i = 0; i < _bufferQueueSize; i++) {
         AudioQueueAllocateBuffer(_audioQueue,
                                  _bufferSize,
