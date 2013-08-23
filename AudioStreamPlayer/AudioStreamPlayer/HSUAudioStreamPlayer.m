@@ -150,7 +150,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 {
     _userStop = YES;
     if (_audioQueue && _isRunning) {
-        CheckErr(AudioQueueStop(_audioQueue, YES));
+        CheckErr(AudioQueueStop(_audioQueue, true));
     } else {
         _seekByteOffset = 0;
         _seekTime = 0;
@@ -180,7 +180,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
         pthread_cond_signal(&_bufferCond);
         pthread_mutex_unlock(&_bufferMutex);
         
-        if ((_readEnd || _readError) && _isRunning && _state != HSU_AS_PAUSED) {
+        if ((_readEnd || _readError || _userStop) && _isRunning && _state != HSU_AS_PAUSED) {
             [self _start];
         }
     }
@@ -242,7 +242,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
                                     &ioFlags);
                 
                 if (_audioQueue && _isRunning) {
-                    CheckErr(AudioQueueStop(_audioQueue, YES));
+                    CheckErr(AudioQueueStop(_audioQueue, true));
                 }
                 _dataProvider = nil;
             }
