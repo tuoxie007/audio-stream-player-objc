@@ -89,6 +89,6 @@ Figure 1-1. Demo screenshot
 
 ## How it works
 
-![Structure](https://raw.github.com/tuoxie007/audio-stream-player-objc/master/structure.svg)
+![Structure](https://raw.github.com/tuoxie007/audio-stream-player-objc/master/structure.png)
 
 Figure 1-2. Components and Data
