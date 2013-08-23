@@ -104,6 +104,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
 }
 
 - (NSData *)readDataWithMaxLength:(NSUInteger)maxLength
+                            error:(BOOL *)error
 {
     int               rc;
     struct timespec   ts;
@@ -134,7 +135,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
     }
     
     if (_streamEvent == kCFStreamEventErrorOccurred) {
-        // todo error
+        *error = YES;
         pthread_mutex_unlock(&_mutex);
         return nil;
     }

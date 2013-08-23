@@ -76,6 +76,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
     BOOL _readEnd;
     BOOL _userStop;
     BOOL _interrupted;
+    BOOL _readError;
     
     NSUInteger _readPacketsNumber;
     NSUInteger _readBytesNumber;
@@ -171,6 +172,9 @@ void HSUAudioSessionInterrupted (void * inClientData,
         
         _seekTime = time;
         _seekByteOffset = _streamDesc.bitrate / 8 * _seekTime;
+        if (_seekByteOffset == 0) {
+            _seekByteOffset = -1;
+        }
         
         pthread_mutex_lock(&_bufferMutex);
         pthread_cond_signal(&_bufferCond);
@@ -192,12 +196,12 @@ void HSUAudioSessionInterrupted (void * inClientData,
                 [self.audioSessionCategory isEqualToString:AVAudioSessionCategoryRecord]) {
                 options |= AVAudioSessionCategoryOptionAllowBluetooth;
             } else {
-                Log(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
+                HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
             }
         }
         [[AVAudioSession sharedInstance] setCategory:self.audioSessionCategory withOptions:options error:nil];
     } else if (self.enableBlueTooth) {
-        Log(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
+        HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
     }
 #else
     if (self.audioSessionCategory) {
@@ -226,6 +230,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
     while (!_userStop) {
         @autoreleasepool {
             if (_seekByteOffset) {
+                //HLog(@"seek byte offset %u", _seekByteOffset);
                 float packetNumPerSecond = _asbd.mSampleRate / _asbd.mFramesPerPacket;
                 
                 UInt32 ioFlags = 0;
@@ -243,6 +248,9 @@ void HSUAudioSessionInterrupted (void * inClientData,
             }
             
             if (!_dataProvider) {
+                if (_seekByteOffset == -1) {
+                    _seekByteOffset = 0;
+                }
                 _dataProvider = [[HSUAudioDataProvider alloc]
                                  initWithURL:_url
                                  cacheFilePath:_cacheFilePath
@@ -258,7 +266,9 @@ void HSUAudioSessionInterrupted (void * inClientData,
             }
             
             _readingData = YES;
-            NSData *data = [_dataProvider readBufferWithMaxLength:_bufferSize];
+            _readError = NO;
+            NSData *data = [_dataProvider readBufferWithMaxLength:_bufferSize
+                                                            error:&_readError];
             if (_userStop) {
                 _dataProvider = nil;
                 break;
@@ -276,7 +286,11 @@ void HSUAudioSessionInterrupted (void * inClientData,
                                           data.length,
                                           data.bytes, 0);
             } else {
-                _readEnd = YES;
+                if (!_readError) {
+                    _readEnd = YES;
+                } else {
+                    HLog(@"Read Error");
+                }
                 _dataProvider = nil;
                 
                 // Flush tail
@@ -330,7 +344,6 @@ void HSUAudioSessionInterrupted (void * inClientData,
         }
         pthread_cond_wait(&_bufferCond, &_bufferMutex);
     }
-    //    Log(@"enqueue %u", _enqueuedBufferCount);
     AudioQueueEnqueueBuffer(_audioQueue, _buffers[bufferIndex],
                             _bufferPacketsCounts[bufferIndex],
                             _bufferPacketDescs[bufferIndex]);
@@ -341,7 +354,6 @@ void HSUAudioSessionInterrupted (void * inClientData,
 // AudioQueue consumed a buffer
 - (void)handleAudioQueueOutputBuffer:(AudioQueueBufferRef)buffer
 {
-    //    Log(@"dequeue %u", _dequeuedBufferCount);
     pthread_mutex_lock(&_bufferMutex);
     _dequeuedBufferCount ++;
     if (_readingData && _dequeuedBufferCount >= _enqueuedBufferCount) {
@@ -376,9 +388,10 @@ void HSUAudioSessionInterrupted (void * inClientData,
                 _seekByteOffset = 0;
                 _seekTime = 0;
                 self.state = HSU_AS_STOPPED;
+            } else if (_readError) {
+                self.state = HSU_AS_ERROR;
             }
         } else {
-            Log(@"set state playing");
             self.state = HSU_AS_PLAYING;
         }
     }
@@ -399,8 +412,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
 
 - (double)progress
 {
-    if (_streamDesc.duration) {
-        return [self currentTime] / _streamDesc.duration;
+    if (self.duration) {
+        return MIN([self currentTime] / self.duration, 1);
     }
     return 0;
 }
@@ -418,7 +431,10 @@ void HSUAudioSessionInterrupted (void * inClientData,
 - (void)setState:(HSUAudioStreamPlayBackState)state
 {
     if (_state != state) {
-        //Log(@"state %@", stateText(state));
+        //HLog(@"state %@", stateText(state));
+        if (state == HSU_AS_STOPPED) {
+            
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             _state = state;
             [[NSNotificationCenter defaultCenter]
@@ -472,8 +488,11 @@ void HSUAudioSessionInterrupted (void * inClientData,
         _bufferByteSize >= _bufferSize * 3 &&
         _bufferByteSize <= _bufferSize * kMaxBufferQueueSize) {
         _bufferQueueSize = _bufferByteSize / _bufferSize;
-    } else if (_bufferByteSize) {
-        Log(@"bufferByteSize invalid, use default %u", _bufferSize * _bufferQueueSize);
+    } else {
+        if (_bufferByteSize) {
+            HLog(@"bufferByteSize invalid, use default %u", _bufferSize * _bufferQueueSize);
+        }
+        _bufferByteSize = _bufferQueueSize * _bufferSize;
     }
     
     for (int i = 0; i < _bufferQueueSize; i++) {
@@ -535,11 +554,6 @@ void HSUAudioSessionInterrupted (void * inClientData,
 - (void)handleAudioFileStreamPropertyChanged:(AudioFileStreamPropertyID)propertyID
                                      ioFlags:(UInt32 *)ioFlags
 {
-    //    Log(@"Property is %c%c%c%c",
-    //          ((char *)&propertyID)[3],
-    //          ((char *)&propertyID)[2],
-    //          ((char *)&propertyID)[1],
-    //          ((char *)&propertyID)[0]);
     if (propertyID == kAudioFileStreamProperty_DataFormat)
     {
         if (_asbd.mSampleRate == 0) {

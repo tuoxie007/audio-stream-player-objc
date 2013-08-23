@@ -38,7 +38,7 @@
     return self;
 }
 
-- (NSData *)readBufferWithMaxLength:(NSUInteger)maxLength
+- (NSData *)readBufferWithMaxLength:(NSUInteger)maxLength error:(BOOL *)error
 {
     if (self.contentLength && self.contentLength <= _byteOffset) {
         return nil;
@@ -49,7 +49,8 @@
                          useMeta:_url != nil];
     }
     NSData *buffer = [_cacheControl readCacheFromOffset:_byteOffset
-                                              maxLength:maxLength];
+                                              maxLength:maxLength
+                                                  error:error];
     
     if (buffer.length == 0) {
         if (!_networkControl && _url) {
@@ -61,15 +62,16 @@
                                initWithURL:_url
                                byteOffset:_byteOffset];
         }
-        buffer = [_networkControl readDataWithMaxLength:maxLength];
+        buffer = [_networkControl readDataWithMaxLength:maxLength
+                                                  error:error];
         if (buffer.length) {
             [_cacheControl writeCacheData:buffer
                                fromOffset:_byteOffset];
         }
-        NSLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
+        //NSLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
     } else {
         _networkControl = nil;
-        NSLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
+        //NSLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
     }
     _byteOffset += buffer.length;
     

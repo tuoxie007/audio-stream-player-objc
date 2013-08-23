@@ -16,7 +16,8 @@
                               useMeta:(BOOL)useMeta;
 
 - (NSData *)readCacheFromOffset:(NSUInteger)fromOffset
-                      maxLength:(NSUInteger)maxLength;
+                      maxLength:(NSUInteger)maxLength
+                          error:(BOOL *)error;
 
 - (void)writeCacheData:(NSData *)cacheData
             fromOffset:(NSUInteger)fromOffset;

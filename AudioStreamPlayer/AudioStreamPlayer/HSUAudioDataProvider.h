@@ -18,6 +18,6 @@
               cacheFilePath:(NSString *)cacheFilePath
                  byteOffset:(NSUInteger)byteOffset;
 
-- (NSData *)readBufferWithMaxLength:(NSUInteger)maxLength;
+- (NSData *)readBufferWithMaxLength:(NSUInteger)maxLength error:(BOOL *)error;
 
 @end

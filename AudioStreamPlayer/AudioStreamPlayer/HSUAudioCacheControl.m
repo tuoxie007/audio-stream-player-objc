@@ -129,7 +129,7 @@
                              contents:nil
                              attributes:nil];
                 if (!succ) {
-                    Log(@"create cache file failed %@", _cacheFilePath);
+                    HLog(@"create cache file failed %@", _cacheFilePath);
                 }
             }
             if (![[NSFileManager defaultManager] fileExistsAtPath:_metaFilePath]) {
@@ -138,7 +138,7 @@
                              contents:nil
                              attributes:nil];
                 if (!succ) {
-                    Log(@"create cache file failed %@", _metaFilePath);
+                    HLog(@"create cache file failed %@", _metaFilePath);
                 }
             }
             _meta = [HSUAudioCacheMeta readFromFile:_metaFilePath];
@@ -157,6 +157,7 @@
 
 - (NSData *)readCacheFromOffset:(NSUInteger)fromOffset
                       maxLength:(NSUInteger)maxLength
+                          error:(BOOL *)error
 {
     if (!_reader) {
         _reader = [NSFileHandle fileHandleForReadingAtPath:_cacheFilePath];

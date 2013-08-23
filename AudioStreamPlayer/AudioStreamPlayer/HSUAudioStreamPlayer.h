@@ -14,14 +14,14 @@
 
 #ifdef DEBUG
 #define LOG_LINENUMBER_METHOD(s,...) NSLog((@"[Line %d] %s " s), __LINE__,__PRETTY_FUNCTION__, ##__VA_ARGS__);
-#define Log(s,...) LOG_LINENUMBER_METHOD(s,##__VA_ARGS__)
+#define HLog(s,...) LOG_LINENUMBER_METHOD(s,##__VA_ARGS__)
 #else
-#define Log(s,...)
+#define HLog(s,...)
 #endif
 
 #define LogErr(err) \
     if (err != noErr) { \
-        Log(@"Error %d, %c%c%c%c", \
+        HLog(@"Error %d, %c%c%c%c", \
         (int)err, \
         ((char *)&err)[3], \
         ((char *)&err)[2], \
@@ -75,7 +75,7 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 @property (nonatomic, assign) BOOL useSoftwareCodec;
 @property (nonatomic, assign) BOOL enableLevelMetering;
 @property (nonatomic, copy) NSString *audioSessionCategory;
-@property (nonatomic, assign) NSUInteger bufferByteSize; // bytes, 3 ~ 300
+@property (nonatomic, assign) NSUInteger bufferByteSize; // bytes, 3 * 2048 ~ 300 * 2048
 @property (nonatomic, assign) BOOL enableBlueTooth;
 
 /*!

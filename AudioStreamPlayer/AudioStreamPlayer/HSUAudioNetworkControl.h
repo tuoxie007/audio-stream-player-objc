@@ -17,6 +17,7 @@
 - (instancetype)initWithURL:(NSURL *)url
                  byteOffset:(NSUInteger)byteOffset;
 
-- (NSData *)readDataWithMaxLength:(NSUInteger)maxLength;
+- (NSData *)readDataWithMaxLength:(NSUInteger)maxLength
+                            error:(BOOL *)error;
 
 @end
