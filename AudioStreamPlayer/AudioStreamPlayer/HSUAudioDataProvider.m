@@ -9,6 +9,7 @@
 #import "HSUAudioDataProvider.h"
 #import "HSUAudioNetworkControl.h"
 #import "HSUAudioCacheControl.h"
+#import "HSUAudioStreamPlayer.h"
 
 @implementation HSUAudioDataProvider
 {
@@ -68,10 +69,10 @@
             [_cacheControl writeCacheData:buffer
                                fromOffset:_byteOffset];
         }
-        //NSLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
+        //HLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
     } else {
         _networkControl = nil;
-        //NSLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
+        //HLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
     }
     _byteOffset += buffer.length;
     

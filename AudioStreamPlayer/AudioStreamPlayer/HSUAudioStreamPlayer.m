@@ -71,6 +71,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
     NSUInteger _bufferSize;
     NSUInteger _seekByteOffset;
     double _seekTime;
+    NSUInteger _currentOffset;
     
     BOOL _readingData;
     BOOL _readEnd;
@@ -78,8 +79,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
     BOOL _interrupted;
     BOOL _readError;
     
-    NSUInteger _readPacketsNumber;
-    NSUInteger _readBytesNumber;
+    NSUInteger _consumedAudioPacketsNumber;
+    NSUInteger _consumedAudioBytesNumber;
     
     AudioFileStreamID _audioFileStream;
     AudioQueueRef _audioQueue;
@@ -167,8 +168,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
 - (void)seekToTime:(double)time
 {
     if (_streamDesc.bitrate) {
-        _readPacketsNumber = 0;
-        _readBytesNumber = 0;
+        _consumedAudioPacketsNumber = 0;
+        _consumedAudioBytesNumber = 0;
         
         _seekTime = time;
         _seekByteOffset = _streamDesc.bitrate / 8 * _seekTime;
@@ -255,6 +256,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
                                  initWithURL:_url
                                  cacheFilePath:_cacheFilePath
                                  byteOffset:_seekByteOffset];
+                _currentOffset = _seekByteOffset;
                 _seekByteOffset = 0;
                 AudioQueueDispose(_audioQueue, true);
                 _audioQueue = nil;
@@ -276,6 +278,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
             }
             _readingData = NO;
             if (data.length) {
+                _currentOffset += data.length;
                 if (!_audioFileStream) {
                     CheckErr(AudioFileStreamOpen((__bridge void *)self,
                                                  HSUAudioFileStreamPropertyListener,
@@ -303,6 +306,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
                     self.state = HSU_AS_PLAYING;
                     AudioQueueFlush(_audioQueue);
                     AudioQueueStop(_audioQueue, false);
+                } else {
+                    self.state = HSU_AS_ERROR;
                 }
                 break;
             }
@@ -328,10 +333,10 @@ void HSUAudioSessionInterrupted (void * inClientData,
         _bufferPacketDescs[bufferIndex][i] = packetDescs[i];
     }
     
-    _readPacketsNumber += numberPackets;
-    _readBytesNumber += numberBytes;
-    if (_readPacketsNumber > 50) {
-        _streamDesc.bitrate = (double)_readBytesNumber / _readPacketsNumber / _asbd.mFramesPerPacket * _asbd.mSampleRate * 8;
+    _consumedAudioPacketsNumber += numberPackets;
+    _consumedAudioBytesNumber += numberBytes;
+    if (_consumedAudioPacketsNumber > 50) {
+        _streamDesc.bitrate = (double)_consumedAudioBytesNumber / _consumedAudioPacketsNumber / _asbd.mFramesPerPacket * _asbd.mSampleRate * 8;
         if (_dataProvider.contentLength) {
             _streamDesc.duration = _dataProvider.contentLength / (_streamDesc.bitrate / 8);
         }
@@ -357,10 +362,12 @@ void HSUAudioSessionInterrupted (void * inClientData,
 {
     pthread_mutex_lock(&_bufferMutex);
     _dequeuedBufferCount ++;
-    if (_readingData && _dequeuedBufferCount >= _enqueuedBufferCount) {
-        if (self.state == HSU_AS_PLAYING) {
-            self.state = HSU_AS_WAITTING;
-            AudioQueuePause(_audioQueue);
+    if (_dequeuedBufferCount >= _enqueuedBufferCount) {
+        if (_readingData) {
+            if (self.state == HSU_AS_PLAYING) {
+                self.state = HSU_AS_WAITTING;
+                AudioQueuePause(_audioQueue);
+            }
         }
     }
     pthread_cond_signal(&_bufferCond);
@@ -376,8 +383,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
         AudioQueueGetProperty(_audioQueue, pid, &_isRunning, &size);
         if (_isRunning == 0) {
             // reset variables
-            _readPacketsNumber = 0;
-            _readBytesNumber = 0;
+            _consumedAudioPacketsNumber = 0;
+            _consumedAudioBytesNumber = 0;
             _enqueuedBufferCount = 0;
             _dequeuedBufferCount = 0;
             
@@ -390,7 +397,11 @@ void HSUAudioSessionInterrupted (void * inClientData,
                 _seekTime = 0;
                 self.state = HSU_AS_STOPPED;
             } else if (_readError) {
-                self.state = HSU_AS_ERROR;
+                _seekByteOffset = _currentOffset;
+                _seekTime = _seekByteOffset / _streamDesc.bitrate * 8;
+                dispatch_async(_dataEnqueueDP, ^{
+                    [self _enqueueData];
+                });
             }
         } else {
             self.state = HSU_AS_PLAYING;
@@ -432,7 +443,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 - (void)setState:(HSUAudioStreamPlayBackState)state
 {
     if (_state != state) {
-        //HLog(@"state %@", stateText(state));
+        HLog(@"state %@", stateText(state));
         if (state == HSU_AS_STOPPED) {
             
         }
