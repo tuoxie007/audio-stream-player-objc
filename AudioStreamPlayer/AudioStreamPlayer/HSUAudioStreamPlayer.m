@@ -456,10 +456,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
 - (void)setState:(HSUAudioStreamPlayBackState)state
 {
     if (_state != state) {
+        _state = state;
         //HLog(@"state %@", stateText(state));
-        if (state == HSU_AS_STOPPED) {
-            
-        }
         dispatch_async(dispatch_get_main_queue(), ^{
             _state = state;
             [[NSNotificationCenter defaultCenter]
