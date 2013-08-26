@@ -612,7 +612,11 @@ void HSUAudioSessionInterrupted (void * inClientData,
                                             propertyID,
                                             &psize,
                                             &bitrate));
-        _streamDesc.bitrate = bitrate * 1024;
+        if (bitrate > 1000) {
+            _streamDesc.bitrate = bitrate;
+        } else {
+            _streamDesc.bitrate = bitrate * 1000;
+        }
     }
     else if (propertyID == kAudioFileStreamProperty_AudioDataByteCount)
     {
