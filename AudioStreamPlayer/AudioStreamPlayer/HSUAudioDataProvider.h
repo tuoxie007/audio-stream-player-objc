@@ -12,6 +12,7 @@
 
 @interface HSUAudioDataProvider : NSObject
 
+@property (nonatomic, readonly) NSUInteger byteOffset;
 @property (nonatomic, readonly) NSUInteger contentLength;
 
 - (instancetype)initWithURL:(NSURL *)url

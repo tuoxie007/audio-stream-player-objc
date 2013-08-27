@@ -16,7 +16,6 @@
     HSUAudioNetworkControl *_networkControl;
     HSUAudioCacheControl *_cacheControl;
     NSURL *_url;
-    NSUInteger _byteOffset;
     NSData *_swap;
     NSString *_cacheFilePath;
 }

@@ -306,17 +306,23 @@ void HSUAudioSessionInterrupted (void * inClientData,
                 } else {
                     HLog(@"Read Error");
                 }
+                
+                NSUInteger startOffset = _dataProvider.byteOffset;
                 _dataProvider = nil;
                 
-                // Flush tail
-                if (!_audioQueue) {
-                    [self _createQueue];
-                }
-                if (_audioQueue) {
-                    AudioQueueStart(_audioQueue, 0);
-                    self.state = HSU_AS_PLAYING;
-                    AudioQueueFlush(_audioQueue);
-                    AudioQueueStop(_audioQueue, false);
+                if (_currentOffset > startOffset) {
+                    // Flush tail
+                    if (!_audioQueue) {
+                        [self _createQueue];
+                    }
+                    if (_audioQueue) {
+                        AudioQueueStart(_audioQueue, 0);
+                        self.state = HSU_AS_PLAYING;
+                        AudioQueueFlush(_audioQueue);
+                        AudioQueueStop(_audioQueue, false);
+                    } else {
+                        self.state = HSU_AS_ERROR;
+                    }
                 } else {
                     self.state = HSU_AS_ERROR;
                 }
