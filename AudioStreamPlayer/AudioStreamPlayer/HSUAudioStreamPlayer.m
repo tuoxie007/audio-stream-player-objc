@@ -25,7 +25,7 @@ SInt64 HSUAudioFileStreamGetPropertySInt64(AudioFileStreamID stream, AudioFilePr
 Float64 HSUAudioFileStreamGetPropertyFloat64(AudioFileStreamID stream, AudioFilePropertyID pid);
 void *HSUAudioFileStreamGetPropertyUndefined(AudioFileStreamID stream, AudioFilePropertyID pid);
 
-void HSUAudioQueueOutputCallback (void *                 inUserData,
+void HSUAudioQueueOutputCallback (void *                  inUserData,
                                   AudioQueueRef           inAQ,
                                   AudioQueueBufferRef     inBuffer);
 
@@ -61,7 +61,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
     HSUAudioDataProvider *_dataProvider;
     AudioQueueBufferRef _buffers[kMaxBufferQueueSize];
     NSUInteger _bufferPacketsCounts[kMaxBufferQueueSize];
-    AudioStreamPacketDescription _bufferPacketDescs[kMaxBufferQueueSize][kMaxPacketsNumber];
+    AudioStreamPacketDescription *_bufferPacketDescs[kMaxBufferQueueSize];
     NSUInteger _enqueuedBufferCount;
     NSUInteger _dequeuedBufferCount;
     pthread_mutex_t _bufferMutex;
@@ -101,6 +101,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
     if (_audioQueue) {
         AudioQueueDispose(_audioQueue, 0);
     }
+    dispatch_release(_dataEnqueueDP);
+    free(_meterStateOfChannels);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -334,9 +336,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
     memcpy((char *)_buffers[bufferIndex]->mAudioData, (const char *)packets, numberBytes);
     _buffers[bufferIndex]->mAudioDataByteSize = numberBytes;
     _bufferPacketsCounts[bufferIndex] = numberPackets;
-    for (int i=0; i<numberPackets; i++) {
-        _bufferPacketDescs[bufferIndex][i] = packetDescs[i];
-    }
+    _bufferPacketDescs[bufferIndex] = packetDescs;
     
     if (!_streamDesc.bitrate || !_streamDesc.duration) { // compute averiage bitrate if not specified in stream info
         _consumedAudioPacketsNumber += numberPackets;
@@ -363,7 +363,8 @@ void HSUAudioSessionInterrupted (void * inClientData,
         }
         pthread_cond_wait(&_bufferCond, &_bufferMutex);
     }
-    AudioQueueEnqueueBuffer(_audioQueue, _buffers[bufferIndex],
+    AudioQueueEnqueueBuffer(_audioQueue,
+                            _buffers[bufferIndex],
                             _bufferPacketsCounts[bufferIndex],
                             _bufferPacketDescs[bufferIndex]);
     _enqueuedBufferCount ++;

@@ -158,7 +158,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
     if (!_httpHeaders) {
         CFTypeRef message =
         CFReadStreamCopyProperty(_stream, kCFStreamPropertyHTTPResponseHeader);
-        _httpHeaders = (__bridge NSDictionary *)CFHTTPMessageCopyAllHeaderFields((CFHTTPMessageRef)message);
+        _httpHeaders = (__bridge_transfer NSDictionary *)CFHTTPMessageCopyAllHeaderFields((CFHTTPMessageRef)message);
         CFRelease(message);
         
         _contentLength = [[_httpHeaders objectForKey:@"Content-Length"] integerValue] + _byteOffset;
