@@ -44,6 +44,9 @@
     }
 #endif
 
+#define IPHONE_6_OR_LATER \
+    [[UIDevice currentDevice].systemVersion compare:@"6.0"] >= NSOrderedDescending
+
 typedef struct HSUAudioStreamDescription {
     double bitrate;
     double duration;

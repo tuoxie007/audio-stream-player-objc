@@ -115,7 +115,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
         [[NSNotificationCenter defaultCenter]
          addObserver:self
          selector:@selector(handleInterruption:)
-         name:AVAudioSessionInterruptionNotification
+         name:IPHONE_6_OR_LATER ? AVAudioSessionInterruptionNotification : @"AVAudioSessionInterruptionNotification"
          object:nil];
         
         _audioSessionCategory = AVAudioSessionCategoryPlayback;
@@ -197,7 +197,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 
 - (void)_start
 {
-    if ([[UIDevice currentDevice].systemVersion compare:@"6.0"] >= NSOrderedDescending) {
+    if (IPHONE_6_OR_LATER) {
         if (self.audioSessionCategory) {
             AVAudioSessionCategoryOptions options = 0;
             if (self.enableBlueTooth) {
@@ -767,7 +767,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
         userInfo = @{AVAudioSessionInterruptionTypeKey: @(AVAudioSessionInterruptionTypeEnded)};
     }
     [[NSNotificationCenter defaultCenter]
-     postNotificationName:AVAudioSessionInterruptionNotification
+     postNotificationName:@"AVAudioSessionInterruptionNotification"
      object:userInfo];
 }
 
