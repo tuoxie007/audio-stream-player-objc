@@ -15,7 +15,6 @@
 #define kMaxBufferSize 2048
 #define kMaxBufferQueueSize 300
 #define kMinBufferQueueSize 3
-#define kMaxPacketsNumber 512
 #define HSUAudioStreamPlayerInterrupted (@"HSUAudioStreamPlayerInterrupted")
 
 void HSUAudioFileStreamGetProperty(AudioFileStreamID stream, AudioFilePropertyID pid);

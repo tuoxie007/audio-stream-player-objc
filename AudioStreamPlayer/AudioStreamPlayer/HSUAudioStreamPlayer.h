@@ -76,7 +76,9 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 @property (nonatomic, assign) BOOL enableLevelMetering;
 @property (nonatomic, copy) NSString *audioSessionCategory;
 
-// bytes, kMinBufferQueueSize * kMaxBufferSize ~ kMaxBufferQueueSize * kMaxBufferSize
+// Bytes, kMinBufferQueueSize * kMaxBufferSize ~ kMaxBufferQueueSize * kMaxBufferSize
+// Audio will start playing when buffer is filled or file ended/errored.
+// So, change bufferByteSize can change use's waiting time.
 @property (nonatomic, assign) NSUInteger bufferByteSize;
 
 @property (nonatomic, assign) BOOL enableBlueTooth;
