@@ -112,7 +112,11 @@ void HSUAudioSessionInterrupted (void * inClientData,
     NSAssert(url || cacheFilePath, @"one of url and cache should be not nil");
     self = [super init];
     if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleInterruption:) name:AVAudioSessionInterruptionNotification object:nil];
+        [[NSNotificationCenter defaultCenter]
+         addObserver:self
+         selector:@selector(handleInterruption:)
+         name:AVAudioSessionInterruptionNotification
+         object:nil];
         
         _audioSessionCategory = AVAudioSessionCategoryPlayback;
         _url = url;
@@ -193,35 +197,35 @@ void HSUAudioSessionInterrupted (void * inClientData,
 
 - (void)_start
 {
-#ifdef HSU_USE_IPHONE_6
-    if (self.audioSessionCategory) {
-        AVAudioSessionCategoryOptions options = 0;
-        if (self.enableBlueTooth) {
-            if ([self.audioSessionCategory isEqualToString:AVAudioSessionCategoryPlayAndRecord] ||
-                [self.audioSessionCategory isEqualToString:AVAudioSessionCategoryRecord]) {
-                options |= AVAudioSessionCategoryOptionAllowBluetooth;
-            } else {
-                HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
+    if ([[UIDevice currentDevice].systemVersion compare:@"6.0"] >= NSOrderedDescending) {
+        if (self.audioSessionCategory) {
+            AVAudioSessionCategoryOptions options = 0;
+            if (self.enableBlueTooth) {
+                if ([self.audioSessionCategory isEqualToString:AVAudioSessionCategoryPlayAndRecord] ||
+                    [self.audioSessionCategory isEqualToString:AVAudioSessionCategoryRecord]) {
+                    options |= AVAudioSessionCategoryOptionAllowBluetooth;
+                } else {
+                    HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
+                }
             }
+            [[AVAudioSession sharedInstance] setCategory:self.audioSessionCategory withOptions:options error:nil];
+        } else if (self.enableBlueTooth) {
+            HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
         }
-        [[AVAudioSession sharedInstance] setCategory:self.audioSessionCategory withOptions:options error:nil];
-    } else if (self.enableBlueTooth) {
-        HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
+    } else {
+        if (self.audioSessionCategory) {
+            [[AVAudioSession sharedInstance]
+             setCategory:self.audioSessionCategory
+             error:nil];
+        }
+        AudioSessionInitialize(NULL, NULL, HSUAudioSessionInterrupted, (__bridge void *)(self));
+        if (self.enableBlueTooth) {
+            UInt32 enableBluetooth = true;
+            AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryEnableBluetoothInput,
+                                    sizeof(enableBluetooth),
+                                    &enableBluetooth);
+        }
     }
-#else
-    if (self.audioSessionCategory) {
-        [[AVAudioSession sharedInstance]
-         setCategory:self.audioSessionCategory
-         error:nil];
-    }
-    AudioSessionInitialize(NULL, NULL, HSUAudioSessionInterrupted, self);
-    if (self.enableBlueTooth) {
-        UInt32 enableBluetooth = true;
-        AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryEnableBluetoothInput,
-                                sizeof(enableBluetooth),
-                                &enableBluetooth);
-    }
-#endif
     
     dispatch_async(_dataEnqueueDP, ^{
         [self _enqueueData];

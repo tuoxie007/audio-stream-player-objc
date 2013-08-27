@@ -44,10 +44,6 @@
     }
 #endif
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_6
-#define HSU_USE_IPHONE_6 (1)
-#endif
-
 typedef struct HSUAudioStreamDescription {
     double bitrate;
     double duration;
