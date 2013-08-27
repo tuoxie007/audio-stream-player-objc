@@ -680,7 +680,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 
 - (void)handleInterruption:(NSNotification *)notification {
     AVAudioSessionInterruptionType interruptionType =
-    [notification.userInfo[AVAudioSessionInterruptionTypeKey] unsignedIntegerValue];
+    [notification.userInfo[IPHONE_6_OR_LATER ? AVAudioSessionInterruptionTypeKey : @"AVAudioSessionInterruptionTypeKey"] unsignedIntegerValue];
 	if (interruptionType == AVAudioSessionInterruptionTypeBegan) {
         if (self.state == HSU_AS_PLAYING) {
             _interrupted = YES;
@@ -762,9 +762,9 @@ void HSUAudioSessionInterrupted (void * inClientData,
 {
     NSDictionary *userInfo = nil;
     if (inInterruptionState == kAudioSessionBeginInterruption) {
-        userInfo = @{AVAudioSessionInterruptionTypeKey: @(AVAudioSessionInterruptionTypeBegan)};
+        userInfo = @{@"AVAudioSessionInterruptionTypeKey": @(AVAudioSessionInterruptionTypeBegan)};
     } else if (inInterruptionState == kAudioSessionEndInterruption) {
-        userInfo = @{AVAudioSessionInterruptionTypeKey: @(AVAudioSessionInterruptionTypeEnded)};
+        userInfo = @{@"AVAudioSessionInterruptionTypeKey": @(AVAudioSessionInterruptionTypeEnded)};
     }
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"AVAudioSessionInterruptionNotification"
