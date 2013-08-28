@@ -10,10 +10,12 @@
 
 #define HSUAudioStreamDataWait (@"HSUAudioStreamDataWait")
 
+@protocol HSUAudioCacheFileEncryptor;
 @interface HSUAudioDataProvider : NSObject
 
 @property (nonatomic, readonly) NSUInteger startOffset;
 @property (nonatomic, readonly) NSUInteger contentLength;
+@property (nonatomic, weak) id<HSUAudioCacheFileEncryptor> cacheEncryptor;
 
 - (instancetype)initWithURL:(NSURL *)url
               cacheFilePath:(NSString *)cacheFilePath

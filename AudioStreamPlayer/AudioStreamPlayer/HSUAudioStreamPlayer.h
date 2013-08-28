@@ -9,7 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 
+#import "HSUAudioCacheControl.h"
+#import "HSUAudioNetworkControl.h"
+#import "HSUAudioDataProvider.h"
+
 #define HSUAudioStreamPlayerStateChanged (@"HSUAudioStreamPlayerStateChanged")
+#define HSUDefaultAudioCacheFileEncryptorPassword 200
 
 
 #ifdef DEBUG
@@ -68,6 +73,7 @@ typedef NS_ENUM (NSUInteger, HSUAudioStreamPlayBackState) {
 
 NSString *stateText(HSUAudioStreamPlayBackState state);
 
+@protocol HSUAudioCacheFileEncryptor;
 @interface HSUAudioStreamPlayer : NSObject
 
 @property (readonly) HSUAudioStreamDescription streamDesc;
@@ -83,6 +89,7 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 
 @property (nonatomic, assign) BOOL enableBlueTooth;
 @property (nonatomic, assign) BOOL enableHeadset;
+@property (nonatomic, strong) id<HSUAudioCacheFileEncryptor> cacheEncryptor;
 
 /*!
  * @description

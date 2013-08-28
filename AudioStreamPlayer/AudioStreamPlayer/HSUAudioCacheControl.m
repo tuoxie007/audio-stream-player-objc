@@ -159,6 +159,7 @@
                       maxLength:(NSUInteger)maxLength
                           error:(BOOL *)error
 {
+    NSData *data = nil;
     if (!_reader) {
         _reader = [NSFileHandle fileHandleForReadingAtPath:_cacheFilePath];
     }
@@ -169,14 +170,18 @@
             
             if (startOffset <= fromOffset && endOffset > fromOffset) {
                 [_reader seekToFileOffset:fromOffset];
-                return [_reader readDataOfLength:MIN(maxLength, endOffset - fromOffset)];
+                data = [_reader readDataOfLength:MIN(maxLength, endOffset - fromOffset)];
+                break;
             }
         }
     } else {
         [_reader seekToFileOffset:fromOffset];
-        return [_reader readDataOfLength:maxLength];
+        data = [_reader readDataOfLength:maxLength];
     }
-    return nil;
+    if (self.encryptor) {
+        data = [self.encryptor decryptData:data];
+    }
+    return data;
 }
 
 - (void)writeCacheData:(NSData *)cacheData
@@ -186,6 +191,9 @@
         _writer = [NSFileHandle fileHandleForUpdatingAtPath:_cacheFilePath];
     }
     [_writer seekToFileOffset:fromOffset];
+    if (self.encryptor) {
+        cacheData = [self.encryptor encryptData:cacheData];
+    }
     [_writer writeData:cacheData];
     [self _updateRangesFromOffset:fromOffset
                            length:cacheData.length];
@@ -228,6 +236,27 @@
     }
     return [meta.ranges[0][1] unsignedIntegerValue] ==
             [meta.contentLength unsignedIntegerValue];
+}
+
+@end
+
+@implementation HSUDefaultAudioCacheFileEncryptor
+
+-(NSData *)encryptData:(NSData *)data
+{
+    if (data.length == 0) {
+        return data;
+    }
+    UInt8 *bytes = (UInt8 *)malloc(data.length);
+    for (int i=0; i<data.length; i++) {
+        bytes[i] = ((UInt8 *)data.bytes)[i] ^ HSUDefaultAudioCacheFileEncryptorPassword;
+    }
+    return [NSData dataWithBytes:bytes length:data.length];
+}
+
+-(NSData *)decryptData:(NSData *)data
+{
+    return [self encryptData:data];
 }
 
 @end

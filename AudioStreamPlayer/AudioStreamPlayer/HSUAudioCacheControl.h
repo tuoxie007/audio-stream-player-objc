@@ -8,9 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol HSUAudioCacheFileEncryptor;
+
 @interface HSUAudioCacheControl : NSObject
 
 @property (nonatomic, assign) NSUInteger contentLength;
+@property (nonatomic, weak) id<HSUAudioCacheFileEncryptor> encryptor;
 
 - (instancetype)initWithCacheFilePath:(NSString *)cacheFilePath
                               useMeta:(BOOL)useMeta;
@@ -25,5 +28,17 @@
 - (void)updateMetaWithContentLength:(NSUInteger)contentLength;
 
 + (BOOL)isCacheCompletedForCachePath:(NSString *)cachePath;
+
+@end
+
+
+@protocol HSUAudioCacheFileEncryptor <NSObject>
+
+- (NSData *)encryptData:(NSData *)data;
+- (NSData *)decryptData:(NSData *)data;
+
+@end
+
+@interface HSUDefaultAudioCacheFileEncryptor : NSObject <HSUAudioCacheFileEncryptor>
 
 @end

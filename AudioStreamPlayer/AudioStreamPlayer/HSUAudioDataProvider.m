@@ -23,6 +23,8 @@
 
 - (void)dealloc
 {
+    _networkControl = nil;
+    _cacheControl = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -49,6 +51,7 @@
         _cacheControl = [[HSUAudioCacheControl alloc]
                          initWithCacheFilePath:_cacheFilePath
                          useMeta:_url != nil];
+        _cacheControl.encryptor = self.cacheEncryptor;
     }
     NSData *buffer = [_cacheControl readCacheFromOffset:_byteOffset
                                               maxLength:maxLength

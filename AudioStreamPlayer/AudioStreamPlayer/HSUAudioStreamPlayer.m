@@ -95,6 +95,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 
 - (void)dealloc
 {
+    _dataProvider = nil;
     pthread_mutex_destroy(&_bufferMutex);
     pthread_cond_destroy(&_bufferCond);
     if (_audioQueue) {
@@ -263,6 +264,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
                                  initWithURL:_url
                                  cacheFilePath:_cacheFilePath
                                  byteOffset:_seekByteOffset];
+                _dataProvider.cacheEncryptor = self.cacheEncryptor;
                 _currentOffset = _seekByteOffset;
                 _seekByteOffset = 0;
                 AudioQueueDispose(_audioQueue, true);
