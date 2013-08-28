@@ -251,7 +251,9 @@
     for (int i=0; i<data.length; i++) {
         bytes[i] = ((UInt8 *)data.bytes)[i] ^ HSUDefaultAudioCacheFileEncryptorPassword;
     }
-    return [NSData dataWithBytes:bytes length:data.length];
+    NSData *result = [NSData dataWithBytes:bytes length:data.length];
+    free(bytes);
+    return result;
 }
 
 -(NSData *)decryptData:(NSData *)data

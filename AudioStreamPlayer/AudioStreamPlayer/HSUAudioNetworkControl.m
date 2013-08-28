@@ -140,7 +140,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
         return nil;
     }
     
-    UInt8 buffer[maxLength];
+    UInt8 *buffer = (UInt8 *)malloc(maxLength);
     long len = CFReadStreamRead(_stream, buffer, maxLength);
     static long total = 0;
     total += len;
@@ -164,7 +164,9 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
         _contentLength = [[_httpHeaders objectForKey:@"Content-Length"] integerValue] + _byteOffset;
     }
     
-    return [NSData dataWithBytes:buffer length:len];
+    NSData *data = [NSData dataWithBytes:buffer length:len];
+    free(buffer);
+    return data;
 }
 
 - (void)streamStateChanged:(CFReadStreamRef)strea
