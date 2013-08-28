@@ -306,7 +306,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
                     HLog(@"Read Error");
                 }
                 
-                NSUInteger startOffset = _dataProvider.byteOffset;
+                NSUInteger startOffset = _dataProvider.startOffset;
                 _dataProvider = nil;
                 
                 if (_currentOffset > startOffset) {
@@ -467,7 +467,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 {
     if (_state != state) {
         _state = state;
-        //HLog(@"state %@", stateText(state));
+        HLog(@"state %@", stateText(state));
         dispatch_async(dispatch_get_main_queue(), ^{
             _state = state;
             [[NSNotificationCenter defaultCenter]

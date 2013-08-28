@@ -18,6 +18,7 @@
     NSURL *_url;
     NSData *_swap;
     NSString *_cacheFilePath;
+    NSUInteger _byteOffset;
 }
 
 - (void)dealloc
@@ -33,6 +34,7 @@
     if (self) {
         _url = url;
         _byteOffset = byteOffset;
+        _startOffset = byteOffset;
         _cacheFilePath = [cacheFilePath copy];
     }
     return self;
