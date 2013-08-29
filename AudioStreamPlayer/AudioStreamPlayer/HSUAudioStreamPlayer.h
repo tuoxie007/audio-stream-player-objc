@@ -89,6 +89,7 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 
 @property (nonatomic, assign) BOOL enableBlueTooth;
 @property (nonatomic, assign) BOOL enableHeadset;
+@property (nonatomic, assign) BOOL correctBitrate;
 @property (nonatomic, strong) id<HSUAudioCacheFileEncryptor> cacheEncryptor;
 
 /*!

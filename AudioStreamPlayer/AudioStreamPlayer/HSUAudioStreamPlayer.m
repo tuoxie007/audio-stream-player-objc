@@ -349,14 +349,15 @@ void HSUAudioSessionInterrupted (void * inClientData,
     _bufferPacketsCounts[bufferIndex] = numberPackets;
     _bufferPacketDescs[bufferIndex] = packetDescs;
     
-    if (!_streamDesc.bitrate || !_streamDesc.duration) { // compute averiage bitrate if not specified in stream info
+    if (!_streamDesc.bitrate || !_streamDesc.duration || _correctBitrate) {
+        // compute averiage bitrate if not specified in stream info or need correct bitrate
         _consumedAudioPacketsNumber += numberPackets;
         _consumedAudioBytesNumber += numberBytes;
-        if (_consumedAudioPacketsNumber > 50) {
-            if (!_streamDesc.bitrate) {
+        if (_consumedAudioPacketsNumber >= 50 && _consumedAudioBytesNumber % 10 == 0) {
+            if (!_streamDesc.bitrate || _correctBitrate) {
                 _streamDesc.bitrate = (double)_consumedAudioBytesNumber / _consumedAudioPacketsNumber / _asbd.mFramesPerPacket * _asbd.mSampleRate * 8;
             }
-            if (!_streamDesc.duration) {
+            if (!_streamDesc.duration || _correctBitrate) {
                 if (_streamDesc.dataByteCount) {
                     _streamDesc.duration = _streamDesc.dataByteCount / (_streamDesc.bitrate / 8);
                 } else if (_streamDesc.contentLength) {
