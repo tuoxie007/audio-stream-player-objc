@@ -72,6 +72,8 @@
         if (buffer.length) {
             [_cacheControl writeCacheData:buffer
                                fromOffset:_byteOffset];
+        } else if (_byteOffset < self.contentLength) {
+            *error = YES;
         }
         //HLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
     } else {
