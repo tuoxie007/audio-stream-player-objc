@@ -694,7 +694,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
             _interrupted = YES;
             [self pause];
         }
-	} else if (interruptionType == AVAudioSessionInterruptionTypeBegan) {
+	} else if (interruptionType == AVAudioSessionInterruptionTypeEnded) {
         if (_interrupted) {
             _interrupted = NO;
             [self play];
