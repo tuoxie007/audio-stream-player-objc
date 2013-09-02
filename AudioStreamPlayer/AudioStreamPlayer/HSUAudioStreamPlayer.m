@@ -45,6 +45,8 @@ void HSUAudioQueuePropertyChanged (void *                  inUserData,
 void HSUAudioSessionInterrupted (void * inClientData,
                                  UInt32 inInterruptionState);
 
+AudioFileTypeID hintForFileExtension(NSString *fileExtension);
+
 @interface HSUAudioStreamPlayer ()
 
 @property (readwrite) HSUAudioStreamPlayBackState state;
@@ -290,10 +292,15 @@ void HSUAudioSessionInterrupted (void * inClientData,
                 }
                 _currentOffset += data.length;
                 if (!_audioFileStream) {
+                    if (!self.fileType) {
+                        NSString *extension = _url.pathExtension;
+                        self.fileType = hintForFileExtension(extension);
+                    }
+                    
                     CheckErr(AudioFileStreamOpen((__bridge void *)self,
                                                  HSUAudioFileStreamPropertyListener,
                                                  HSUAudioPacketsCallback,
-                                                 0,
+                                                 self.fileType,
                                                  &_audioFileStream));
                 }
                 AudioFileStreamParseBytes(_audioFileStream,
@@ -806,4 +813,42 @@ NSString *stateText(HSUAudioStreamPlayBackState state)
         default:
             break;
     }
+}
+
+AudioFileTypeID hintForFileExtension(NSString *fileExtension)
+{
+	AudioFileTypeID fileTypeHint = kAudioFileMP3Type;
+	if ([fileExtension isEqual:@"mp3"])
+	{
+		fileTypeHint = kAudioFileMP3Type;
+	}
+	else if ([fileExtension isEqual:@"wav"])
+	{
+		fileTypeHint = kAudioFileWAVEType;
+	}
+	else if ([fileExtension isEqual:@"aifc"])
+	{
+		fileTypeHint = kAudioFileAIFCType;
+	}
+	else if ([fileExtension isEqual:@"aiff"])
+	{
+		fileTypeHint = kAudioFileAIFFType;
+	}
+	else if ([fileExtension isEqual:@"m4a"])
+	{
+		fileTypeHint = kAudioFileM4AType;
+	}
+	else if ([fileExtension isEqual:@"mp4"])
+	{
+		fileTypeHint = kAudioFileMPEG4Type;
+	}
+	else if ([fileExtension isEqual:@"caf"])
+	{
+		fileTypeHint = kAudioFileCAFType;
+	}
+	else if ([fileExtension isEqual:@"aac"])
+	{
+		fileTypeHint = kAudioFileAAC_ADTSType;
+	}
+	return fileTypeHint;
 }
