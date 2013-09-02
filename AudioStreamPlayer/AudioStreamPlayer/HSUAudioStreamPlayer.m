@@ -817,7 +817,7 @@ NSString *stateText(HSUAudioStreamPlayBackState state)
 
 AudioFileTypeID hintForFileExtension(NSString *fileExtension)
 {
-	AudioFileTypeID fileTypeHint = kAudioFileMP3Type;
+	AudioFileTypeID fileTypeHint = 0;
 	if ([fileExtension isEqual:@"mp3"])
 	{
 		fileTypeHint = kAudioFileMP3Type;
