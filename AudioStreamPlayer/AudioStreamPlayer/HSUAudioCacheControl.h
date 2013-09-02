@@ -34,6 +34,7 @@
 
 @protocol HSUAudioCacheFileEncryptor <NSObject>
 
+- (void)encryptFileWith:(NSString *)filePath;
 - (NSData *)encryptData:(NSData *)data;
 - (NSData *)decryptData:(NSData *)data;
 

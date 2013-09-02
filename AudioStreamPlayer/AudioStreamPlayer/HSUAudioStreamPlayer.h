@@ -13,7 +13,7 @@
 #import "HSUAudioNetworkControl.h"
 #import "HSUAudioDataProvider.h"
 
-#define HSUAudioStreamPlayerStateChanged (@"HSUAudioStreamPlayerStateChanged")
+#define HSUAudioStreamPlayerStateChangedNotification (@"HSUAudioStreamPlayerStateChangedNotification")
 #define HSUDefaultAudioCacheFileEncryptorPassword 200
 
 

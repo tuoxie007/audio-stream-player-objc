@@ -15,7 +15,6 @@
 #define kMaxBufferSize 2048
 #define kMaxBufferQueueSize 300
 #define kMinBufferQueueSize 3
-#define HSUAudioStreamPlayerInterrupted (@"HSUAudioStreamPlayerInterrupted")
 
 void HSUAudioFileStreamGetProperty(AudioFileStreamID stream, AudioFilePropertyID pid);
 UInt32 HSUAudioFileStreamGetPropertyUInt32(AudioFileStreamID stream, AudioFilePropertyID pid);
@@ -138,7 +137,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 {
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
     _userStop = NO;
-    if (self.state == HSU_AS_PAUSED && _audioQueue) {
+    if (self.state == HSU_AS_PAUSED && _audioQueue && _seekByteOffset == 0) {
         err = AudioQueueStart(_audioQueue, NULL);
         if (err == noErr) {
             if (_enqueuedBufferCount > _dequeuedBufferCount ||
@@ -239,7 +238,6 @@ void HSUAudioSessionInterrupted (void * inClientData,
     while (!_userStop) {
         @autoreleasepool {
             if (_seekByteOffset) {
-                //HLog(@"seek byte offset %u", _seekByteOffset);
                 float packetNumPerSecond = _asbd.mSampleRate / _asbd.mFramesPerPacket;
                 
                 UInt32 ioFlags = 0;
@@ -474,7 +472,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
         dispatch_async(dispatch_get_main_queue(), ^{
             _state = state;
             [[NSNotificationCenter defaultCenter]
-             postNotificationName:HSUAudioStreamPlayerStateChanged
+             postNotificationName:HSUAudioStreamPlayerStateChangedNotification
              object:self];
         });
     }
@@ -687,6 +685,7 @@ void HSUAudioSessionInterrupted (void * inClientData,
 }
 
 - (void)handleInterruption:(NSNotification *)notification {
+    NSLog(@"type %@", notification.userInfo[@"AVAudioSessionInterruptionTypeKey"]);
     AVAudioSessionInterruptionType interruptionType =
     [notification.userInfo[IPHONE_6_OR_LATER ? AVAudioSessionInterruptionTypeKey : @"AVAudioSessionInterruptionTypeKey"] unsignedIntegerValue];
 	if (interruptionType == AVAudioSessionInterruptionTypeBegan) {
@@ -773,10 +772,14 @@ void HSUAudioSessionInterrupted (void * inClientData,
         userInfo = @{@"AVAudioSessionInterruptionTypeKey": @(AVAudioSessionInterruptionTypeBegan)};
     } else if (inInterruptionState == kAudioSessionEndInterruption) {
         userInfo = @{@"AVAudioSessionInterruptionTypeKey": @(AVAudioSessionInterruptionTypeEnded)};
+    } else {
+        return;
     }
+    
     [[NSNotificationCenter defaultCenter]
      postNotificationName:@"AVAudioSessionInterruptionNotification"
-     object:userInfo];
+     object:nil
+     userInfo:userInfo];
 }
 
 NSString *stateText(HSUAudioStreamPlayBackState state)

@@ -242,6 +242,34 @@
 
 @implementation HSUDefaultAudioCacheFileEncryptor
 
+- (void)encryptFileWith:(NSString *)filePath
+{
+	NSString *desFilepath = [filePath stringByAppendingString:@"encodeFile"];
+    
+	NSFileManager *fm = [[NSFileManager alloc] init];
+	[fm createFileAtPath:desFilepath contents:nil attributes:nil];
+    
+	NSFileHandle *readFileHandle = [NSFileHandle fileHandleForReadingAtPath:filePath];
+	NSFileHandle *writeFileHandle = [NSFileHandle fileHandleForUpdatingAtPath:desFilepath];
+	
+    while (YES) {
+		@autoreleasepool {
+			NSData *data = [readFileHandle readDataOfLength:4096];
+            if (!data.length) {
+                break;
+            }
+			data = [self encryptData:data];
+			[writeFileHandle writeData:data];
+		}
+	}
+	
+	[writeFileHandle closeFile];
+	[readFileHandle closeFile];
+	[fm removeItemAtPath:filePath error:nil];
+	[fm moveItemAtPath:desFilepath toPath:filePath error:nil];
+}
+
+
 -(NSData *)encryptData:(NSData *)data
 {
     if (data.length == 0) {
