@@ -71,6 +71,11 @@ typedef NS_ENUM (NSUInteger, HSUAudioStreamPlayBackState) {
     HSU_AS_ERROR,
 };
 
+// As default: buffer memory = kMaxBufferSize * kMaxBufferQueueSize
+#define kMaxBufferSize 2048
+#define kMaxBufferQueueSize 300
+#define kMinBufferQueueSize 3
+
 NSString *stateText(HSUAudioStreamPlayBackState state);
 
 @protocol HSUAudioCacheFileEncryptor;

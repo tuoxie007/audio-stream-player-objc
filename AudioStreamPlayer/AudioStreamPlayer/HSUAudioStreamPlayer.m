@@ -11,11 +11,6 @@
 #import <AVFoundation/AVFoundation.h>
 #include <pthread.h>
 
-// As default: buffer memory = kMaxBufferSize * kMaxBufferQueueSize
-#define kMaxBufferSize 2048
-#define kMaxBufferQueueSize 300
-#define kMinBufferQueueSize 3
-
 void HSUAudioFileStreamGetProperty(AudioFileStreamID stream, AudioFilePropertyID pid);
 UInt32 HSUAudioFileStreamGetPropertyUInt32(AudioFileStreamID stream, AudioFilePropertyID pid);
 UInt64 HSUAudioFileStreamGetPropertyUInt64(AudioFileStreamID stream, AudioFilePropertyID pid);
@@ -139,12 +134,16 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 {
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
     _userStop = NO;
-    if (self.state == HSU_AS_PAUSED && _audioQueue && !_readEnd) {
+    if (self.state == HSU_AS_PAUSED && _audioQueue && _isRunning) {
+        BOOL seek = _seekByteOffset > 0;
         err = AudioQueueStart(_audioQueue, NULL);
         if (err == noErr) {
-            if (_enqueuedBufferCount > _dequeuedBufferCount ||
-                _readEnd || _readError) {
-                self.state = HSU_AS_PLAYING;
+            if ((_enqueuedBufferCount > _dequeuedBufferCount || _readError)) {
+                if (seek) {
+                    self.state = HSU_AS_WAITTING;
+                } else {
+                    self.state = HSU_AS_PLAYING;
+                }
             }
         } else {
             HLogErr(err);
@@ -331,9 +330,15 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         // compute averiage bitrate if not specified in stream info or need correct bitrate
         _consumedAudioPacketsNumber += numberPackets;
         _consumedAudioBytesNumber += numberBytes;
-        if (_consumedAudioPacketsNumber >= 50 && _consumedAudioBytesNumber % 10 == 0) {
+        if (_consumedAudioPacketsNumber >= 50 && _consumedAudioPacketsNumber % 10 == 0) {
             if (!_streamDesc.bitrate || _correctBitrate) {
+                BOOL first = !_streamDesc.bitrate;
                 _streamDesc.bitrate = (double)_consumedAudioBytesNumber / _consumedAudioPacketsNumber / _asbd.mFramesPerPacket * _asbd.mSampleRate * 8;
+                if (first) {
+                    if (_seekTime) {
+                        _seekByteOffset = _seekTime * _streamDesc.bitrate / 8;
+                    }
+                }
             }
             if (!_streamDesc.duration || _correctBitrate) {
                 if (_streamDesc.dataByteCount) {
@@ -449,11 +454,12 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     if (_state != state) {
         _state = state;
         HLog(@"state %@", stateText(state));
+        __weak typeof(self)weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
             _state = state;
             [[NSNotificationCenter defaultCenter]
              postNotificationName:HSUAudioStreamPlayerStateChangedNotification
-             object:self];
+             object:weakSelf];
         });
     }
 }
@@ -707,7 +713,6 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 }
 
 - (void)handleInterruption:(NSNotification *)notification {
-    NSLog(@"type %@", notification.userInfo[@"AVAudioSessionInterruptionTypeKey"]);
     AVAudioSessionInterruptionType interruptionType =
     [notification.userInfo[IPHONE_6_OR_LATER ? AVAudioSessionInterruptionTypeKey : @"AVAudioSessionInterruptionTypeKey"] unsignedIntegerValue];
 	if (interruptionType == AVAudioSessionInterruptionTypeBegan) {
