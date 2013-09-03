@@ -139,7 +139,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 {
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
     _userStop = NO;
-    if (self.state == HSU_AS_PAUSED && _audioQueue && _seekByteOffset == 0) {
+    if (self.state == HSU_AS_PAUSED && _audioQueue && !_readEnd) {
         err = AudioQueueStart(_audioQueue, NULL);
         if (err == noErr) {
             if (_enqueuedBufferCount > _dequeuedBufferCount ||
@@ -227,6 +227,9 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
             }
             
             if (!_dataProvider) {
+                if (_seekTime && !_seekByteOffset) {
+                    self.state = HSU_AS_WAITTING;
+                }
                 if (_seekByteOffset == -1) {
                     _seekByteOffset = 0;
                 }
