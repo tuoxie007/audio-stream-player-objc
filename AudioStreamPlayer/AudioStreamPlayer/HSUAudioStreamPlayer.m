@@ -198,36 +198,6 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 
 - (void)_start
 {
-    if (IPHONE_6_OR_LATER) {
-        if (self.audioSessionCategory) {
-            AVAudioSessionCategoryOptions options = 0;
-            if (self.enableBlueTooth) {
-                if ([self.audioSessionCategory isEqualToString:AVAudioSessionCategoryPlayAndRecord] ||
-                    [self.audioSessionCategory isEqualToString:AVAudioSessionCategoryRecord]) {
-                    options |= AVAudioSessionCategoryOptionAllowBluetooth;
-                } else {
-                    HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
-                }
-            }
-            [[AVAudioSession sharedInstance] setCategory:self.audioSessionCategory withOptions:options error:nil];
-        } else if (self.enableBlueTooth) {
-            HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
-        }
-    } else {
-        if (self.audioSessionCategory) {
-            [[AVAudioSession sharedInstance]
-             setCategory:self.audioSessionCategory
-             error:nil];
-        }
-        AudioSessionInitialize(NULL, NULL, HSUAudioSessionInterrupted, (__bridge void *)(self));
-        if (self.enableBlueTooth) {
-            UInt32 enableBluetooth = true;
-            AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryEnableBluetoothInput,
-                                    sizeof(enableBluetooth),
-                                    &enableBluetooth);
-        }
-    }
-    
     dispatch_async(_dataEnqueueDP, ^{
         [self _enqueueData];
     });
@@ -489,17 +459,59 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 {
     _enableHeadset = enableHeadset;
     if (_audioQueue) {
-        [self _setupAudioRoute];
+        [self _setupCategory];
     }
 }
 
-- (void)_setupAudioRoute
+- (void)_setupCategory
 {
-    UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_Speaker;
-    if (self.enableHeadset) {
-        audioRouteOverride = kAudioSessionOverrideAudioRoute_None;
+    if (IPHONE_6_OR_LATER) {
+        if (self.audioSessionCategory) {
+            AVAudioSessionCategoryOptions options = 0;
+            if (self.enableBlueTooth) {
+                if ([self.audioSessionCategory isEqualToString:AVAudioSessionCategoryPlayAndRecord] ||
+                    [self.audioSessionCategory isEqualToString:AVAudioSessionCategoryRecord]) {
+                    options |= AVAudioSessionCategoryOptionAllowBluetooth;
+                } else {
+                    HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
+                }
+                if (!self.enableHeadset) {
+                    options |= AVAudioSessionCategoryOptionDefaultToSpeaker;
+                }
+            }
+            [[AVAudioSession sharedInstance]
+             setCategory:self.audioSessionCategory
+             withOptions:options
+             error:nil];
+        } else if (self.enableBlueTooth) {
+            HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
+        }
+    } else {
+        if (self.audioSessionCategory) {
+            [[AVAudioSession sharedInstance]
+             setCategory:self.audioSessionCategory
+             error:nil];
+        }
+        if (!_audioQueue) {
+            AudioSessionInitialize(NULL, NULL, HSUAudioSessionInterrupted, (__bridge void *)(self));
+        }
+        if (self.enableBlueTooth) {
+            UInt32 enableBluetooth = true;
+            AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryEnableBluetoothInput,
+                                    sizeof(enableBluetooth),
+                                    &enableBluetooth);
+        }
+        if (!self.enableHeadset) {
+            UInt32 defaultToSpeaker = true;
+            AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryDefaultToSpeaker,
+                                    sizeof(defaultToSpeaker),
+                                    &defaultToSpeaker);
+        }
     }
-    AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute, sizeof(audioRouteOverride), &audioRouteOverride);
+    if (self.enableHeadset) {
+        UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_None;
+        AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute, sizeof(audioRouteOverride), &audioRouteOverride);
+    }
 }
 
 - (void)_dataWait:(NSNotification *)notification
@@ -512,7 +524,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     if (!_asbd.mSampleRate) {
         return;
     }
-    [self _setupAudioRoute];
+    [self _setupCategory];
 	_streamDesc.sampleRate = _asbd.mSampleRate;
 	
     CheckErr(AudioQueueNewOutput(&_asbd,
