@@ -197,8 +197,9 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 
 - (void)_start
 {
+    __weak typeof(self)weakSelf = self;
     dispatch_async(_dataEnqueueDP, ^{
-        [self _enqueueData];
+        [weakSelf _enqueueData];
     });
 }
 
@@ -408,8 +409,9 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
             } else if (_readError) {
                 _seekByteOffset = _currentOffset;
                 _seekTime = _seekByteOffset / _streamDesc.bitrate * 8;
+                __weak typeof(self)weakSelf = self;
                 dispatch_async(_dataEnqueueDP, ^{
-                    [self _enqueueData];
+                    [weakSelf _enqueueData];
                 });
             }
         } else {
@@ -456,10 +458,12 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         HLog(@"state %@", stateText(state));
         __weak typeof(self)weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            _state = state;
-            [[NSNotificationCenter defaultCenter]
-             postNotificationName:HSUAudioStreamPlayerStateChangedNotification
-             object:weakSelf];
+            if (weakSelf) {
+                _state = state;
+                [[NSNotificationCenter defaultCenter]
+                 postNotificationName:HSUAudioStreamPlayerStateChangedNotification
+                 object:weakSelf];
+            }
         });
     }
 }
