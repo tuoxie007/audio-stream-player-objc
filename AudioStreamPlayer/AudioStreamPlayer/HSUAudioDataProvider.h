@@ -23,4 +23,6 @@
 
 - (NSData *)readBufferWithMaxLength:(NSUInteger)maxLength error:(BOOL *)error;
 
+- (void)close;
+
 @end

@@ -20,4 +20,6 @@
 - (NSData *)readDataWithMaxLength:(NSUInteger)maxLength
                             error:(BOOL *)error;
 
+- (void)close;
+
 @end

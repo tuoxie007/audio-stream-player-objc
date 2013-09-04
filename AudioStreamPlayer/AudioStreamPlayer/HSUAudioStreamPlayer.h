@@ -18,8 +18,8 @@
 
 
 #ifdef DEBUG
-#define LOG_LINENUMBER_METHOD(s,...) NSLog((@"[Line %d] %s " s), __LINE__,__PRETTY_FUNCTION__, ##__VA_ARGS__);
-#define HLog(s,...) LOG_LINENUMBER_METHOD(s,##__VA_ARGS__)
+#define HLOG_LINENUMBER_METHOD(s,...) NSLog((@"[Line %d] %s " s), __LINE__, __PRETTY_FUNCTION__, ##__VA_ARGS__);
+#define HLog(s,...) HLOG_LINENUMBER_METHOD(s, ##__VA_ARGS__)
 #else
 #define HLog(s,...)
 #endif
@@ -97,6 +97,8 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 @property (nonatomic, assign) BOOL enableHeadset;
 @property (nonatomic, assign) BOOL correctBitrate;
 @property (nonatomic, strong) id<HSUAudioCacheFileEncryptor> cacheEncryptor;
+
+@property (nonatomic, assign) NSUInteger dataOffset;
 
 /*!
  * @description

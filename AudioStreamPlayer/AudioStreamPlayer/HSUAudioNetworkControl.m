@@ -23,6 +23,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
     pthread_mutex_t _mutex;
     CFStreamEventType _streamEvent;
     NSDictionary *_httpHeaders;
+    BOOL _closed;
 }
 
 - (void)dealloc
@@ -31,6 +32,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
     pthread_cond_destroy(&_cond);
     CFReadStreamClose(_stream);
     CFRelease(_stream);
+    _stream = nil;
 }
 
 - (instancetype)initWithURL:(NSURL *)url
@@ -38,6 +40,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
 {
     self = [super init];
     if (self) {
+        _closed = YES;
 		CFHTTPMessageRef message =
         CFHTTPMessageCreateRequest(NULL,
                                    (CFStringRef)@"GET",
@@ -86,6 +89,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
 			CFRelease(_stream);
             // todo error
 		}
+        _closed = NO;
 		CFStreamClientContext context = {0, (__bridge void *)self, NULL, NULL, NULL};
 		CFReadStreamSetClient(_stream,
                               kCFStreamEventHasBytesAvailable |
@@ -118,7 +122,7 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
     ts.tv_nsec = tp.tv_usec * 1000;
     ts.tv_sec += NETWORK_TIMEOUT;
     
-    while (_streamEvent == kCFStreamEventNone && !CFReadStreamHasBytesAvailable(_stream)) {
+    while (!_closed && _streamEvent == kCFStreamEventNone && !CFReadStreamHasBytesAvailable(_stream)) {
         int status = pthread_cond_timedwait(&_cond, &_mutex, &ts);
         if (status != 0) {
             pthread_mutex_unlock(&_mutex);
@@ -127,6 +131,11 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
             pthread_mutex_unlock(&_mutex);
             return nil;
         }
+    }
+    
+    if (_closed) {
+        pthread_mutex_unlock(&_mutex);
+        return nil;
     }
     
     if (_streamEvent == kCFStreamEventEndEncountered) {
@@ -169,11 +178,19 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
     return data;
 }
 
-- (void)streamStateChanged:(CFReadStreamRef)strea
+- (void)streamStateChanged:(CFReadStreamRef)stream
                  eventType:(CFStreamEventType)eventType
 {
     pthread_mutex_lock(&_mutex);
     _streamEvent = eventType;
+    pthread_cond_signal(&_cond);
+    pthread_mutex_unlock(&_mutex);
+}
+
+- (void)close
+{
+    pthread_mutex_lock(&_mutex);
+    _closed = YES;
     pthread_cond_signal(&_cond);
     pthread_mutex_unlock(&_mutex);
 }

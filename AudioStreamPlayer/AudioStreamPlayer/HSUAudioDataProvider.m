@@ -91,6 +91,11 @@
     return buffer;
 }
 
+- (void)close
+{
+    [_networkControl close];
+}
+
 - (NSUInteger)contentLength
 {
     NSUInteger len = 0;

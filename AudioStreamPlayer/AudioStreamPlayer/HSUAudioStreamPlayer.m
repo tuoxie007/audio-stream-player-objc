@@ -92,6 +92,8 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 - (void)dealloc
 {
     _dataProvider = nil;
+    _url = nil;
+    _cacheFilePath = nil;
     pthread_mutex_destroy(&_bufferMutex);
     pthread_cond_destroy(&_bufferCond);
     if (_audioQueue) {
@@ -108,6 +110,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     NSAssert(url || cacheFilePath, @"one of url and cache should be not nil");
     self = [super init];
     if (self) {
+        [self performSelector:@selector(test)];
         [[NSNotificationCenter defaultCenter]
          addObserver:self
          selector:@selector(handleInterruption:)
@@ -118,7 +121,6 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         _url = url;
         _cacheFilePath = [cacheFilePath copy];
         _dataEnqueueDP = dispatch_queue_create("me.tuoxie.audiostream", NULL);
-        
         _bufferSize = kMaxBufferSize;
         
         pthread_mutex_init(&_bufferMutex, NULL);
@@ -134,22 +136,41 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 {
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
     _userStop = NO;
-    if (self.state == HSU_AS_PAUSED && _audioQueue && _isRunning) {
+    
+    if (self.state == HSU_AS_ERROR && !_seekByteOffset) {
+        _seekByteOffset = _currentOffset;
+    }
+    
+    BOOL restart;
+    if (self.state == HSU_AS_PAUSED && _audioQueue && _isRunning) { // paused
+        if (_seekByteOffset) { // seeking
+            if (_readEnd || _readError) { // read end
+                restart = YES;
+            } else {
+                restart = NO;
+            }
+        } else {
+            restart = NO;
+        }
+    } else {
+        restart = YES;
+    }
+    
+    if (restart) {
+        [self _start];
+    } else {
         BOOL seek = _seekByteOffset > 0;
         err = AudioQueueStart(_audioQueue, NULL);
         if (err == noErr) {
-            if ((_enqueuedBufferCount > _dequeuedBufferCount || _readError)) {
-                if (seek) {
-                    self.state = HSU_AS_WAITTING;
-                } else {
-                    self.state = HSU_AS_PLAYING;
-                }
+            BOOL hasBuffer = _enqueuedBufferCount > _dequeuedBufferCount;
+            if (seek || !hasBuffer) {
+                self.state = HSU_AS_WAITTING;
+            } else {
+                self.state = HSU_AS_PLAYING;
             }
         } else {
             HLogErr(err);
         }
-    } else {
-        [self _start];
     }
 }
 
@@ -162,6 +183,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         _seekByteOffset = 0;
         _seekTime = 0;
         self.state = HSU_AS_STOPPED;
+        [_dataProvider close];
     }
 }
 
@@ -421,6 +443,11 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     return noErr;
 }
 
+- (NSUInteger)dataOffset
+{
+    return _currentOffset;
+}
+
 - (double)currentTime
 {
     if (_audioQueue && !_seekByteOffset) {
@@ -455,7 +482,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 {
     if (_state != state) {
         _state = state;
-        HLog(@"state %@", stateText(state));
+        //HLog(@"state %@", stateText(state));
         __weak typeof(self)weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
             if (weakSelf) {
