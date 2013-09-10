@@ -98,6 +98,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     pthread_cond_destroy(&_bufferCond);
     if (_audioQueue) {
         AudioQueueDispose(_audioQueue, 0);
+        _audioQueue = nil;
     }
     dispatch_release(_dataEnqueueDP);
     free(_meterStateOfChannels);
@@ -110,7 +111,6 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     NSAssert(url || cacheFilePath, @"one of url and cache should be not nil");
     self = [super init];
     if (self) {
-        [self performSelector:@selector(test)];
         [[NSNotificationCenter defaultCenter]
          addObserver:self
          selector:@selector(handleInterruption:)
@@ -570,8 +570,8 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     CheckErr(AudioQueueNewOutput(&_asbd,
                                  HSUAudioQueueOutputCallback,
                                  (__bridge void *)self,
-                                 NULL,
-                                 NULL,
+                                 CFRunLoopGetMain(),
+                                 kCFRunLoopCommonModes,
                                  0,
                                  &_audioQueue));
     CheckErr(AudioQueueAddPropertyListener(_audioQueue,
