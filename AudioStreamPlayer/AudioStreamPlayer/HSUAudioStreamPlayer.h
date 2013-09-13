@@ -82,11 +82,14 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 @interface HSUAudioStreamPlayer : NSObject
 
 @property (readonly) HSUAudioStreamDescription streamDesc;
+@property (readonly) double bitrate;
 @property (readonly) HSUAudioStreamPlayBackState state;
 @property (nonatomic, assign) BOOL useSoftwareCodec;
 @property (nonatomic, assign) BOOL enableLevelMetering;
 @property (nonatomic, copy) NSString *audioSessionCategory;
 @property (nonatomic, assign) AudioFileTypeID fileType;
+
+@property (nonatomic, assign) double presetDuration;
 
 // Bytes, kMinBufferQueueSize * kMaxBufferSize ~ kMaxBufferQueueSize * kMaxBufferSize
 // Audio will start playing when buffer is filled or file ended/errored.

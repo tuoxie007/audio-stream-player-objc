@@ -53,6 +53,11 @@ void HSUReadStreamCallBack(CFReadStreamRef   stream,
                                              CFSTR("Range"),
                                              (__bridge CFStringRef)range);
         }
+        if ([WSDDUserSettings getInstance].innerNet) {
+			CFHTTPMessageSetHeaderFieldValue(message,
+                                             CFSTR("Host"),
+                                             (__bridge CFStringRef)@"a.ppsrc.com");
+        }
         _stream = CFReadStreamCreateForHTTPRequest(NULL, message);
         CFRelease(message);
         

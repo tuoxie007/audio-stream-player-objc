@@ -82,6 +82,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     UInt32 _isRunning;
     AudioStreamBasicDescription _asbd;
     AudioQueueLevelMeterState *_meterStateOfChannels;
+    double _bitrate;
     
     HSUAudioStreamPlayBackState _state;
     dispatch_queue_t _dataEnqueueDP;
@@ -195,12 +196,12 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 
 - (void)seekToTime:(double)time
 {
-    if (_streamDesc.bitrate) {
+    if (self.bitrate) {
         _consumedAudioPacketsNumber = 0;
         _consumedAudioBytesNumber = 0;
         
         _seekTime = time;
-        _seekByteOffset = _streamDesc.bitrate / 8 * _seekTime;
+        _seekByteOffset = self.bitrate / 8 * _seekTime;
         if (_seekByteOffset == 0) {
             _seekByteOffset = -1;
         }
@@ -284,6 +285,9 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
             if (data.length) {
                 if (!_streamDesc.contentLength) {
                     _streamDesc.contentLength = _dataProvider.contentLength;
+                    if (self.presetDuration) {
+                        _bitrate = _streamDesc.contentLength / self.presetDuration * 8;
+                    }
                 }
                 _currentOffset += data.length;
                 if (!_audioFileStream) {
@@ -355,19 +359,19 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         _consumedAudioBytesNumber += numberBytes;
         if (_consumedAudioPacketsNumber >= 50 && _consumedAudioPacketsNumber % 10 == 0) {
             if (!_streamDesc.bitrate || _correctBitrate) {
-                BOOL first = !_streamDesc.bitrate;
+                BOOL first = !self.bitrate;
                 _streamDesc.bitrate = (double)_consumedAudioBytesNumber / _consumedAudioPacketsNumber / _asbd.mFramesPerPacket * _asbd.mSampleRate * 8;
                 if (first) {
                     if (_seekTime) {
-                        _seekByteOffset = _seekTime * _streamDesc.bitrate / 8;
+                        _seekByteOffset = _seekTime * self.bitrate / 8;
                     }
                 }
             }
             if (!_streamDesc.duration || _correctBitrate) {
                 if (_streamDesc.dataByteCount) {
-                    _streamDesc.duration = _streamDesc.dataByteCount / (_streamDesc.bitrate / 8);
+                    _streamDesc.duration = _streamDesc.dataByteCount / (self.bitrate / 8);
                 } else if (_streamDesc.contentLength) {
-                    _streamDesc.duration = _streamDesc.contentLength / (_streamDesc.bitrate / 8);
+                    _streamDesc.duration = _streamDesc.contentLength / (self.bitrate / 8);
                 }
             }
         }
@@ -430,7 +434,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                 self.state = HSU_AS_STOPPED;
             } else if (_readError) {
                 _seekByteOffset = _currentOffset;
-                _seekTime = _seekByteOffset / _streamDesc.bitrate * 8;
+                _seekTime = _seekByteOffset / self.bitrate * 8;
                 __weak typeof(self)weakSelf = self;
                 dispatch_async(_dataEnqueueDP, ^{
                     [weakSelf _enqueueData];
@@ -470,7 +474,12 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 
 - (double)duration
 {
-    return _streamDesc.duration;
+    return self.presetDuration ?: self.duration;
+}
+
+- (double)bitrate
+{
+    return _bitrate ?: _streamDesc.bitrate;
 }
 
 - (HSUAudioStreamPlayBackState)state
@@ -693,7 +702,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                                             propertyID,
                                             &psize,
                                             &_streamDesc.dataByteCount));
-        _streamDesc.duration = _streamDesc.dataByteCount / _streamDesc.bitrate * 8;
+        _streamDesc.duration = _streamDesc.dataByteCount / self.bitrate * 8;
     }
     else if (propertyID == kAudioFileStreamProperty_DataFormat)
     {
@@ -738,8 +747,8 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         }
         free(formatList);
     }
-    if (_asbd.mSampleRate && _streamDesc.bitrate && _seekTime) { // got format
-        _seekByteOffset = _seekTime * _streamDesc.bitrate / 8;
+    if (_asbd.mSampleRate && self.bitrate && _seekTime) { // got format
+        _seekByteOffset = _seekTime * self.bitrate / 8;
     }
 }
 
