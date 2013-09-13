@@ -92,3 +92,8 @@ Figure 1-1. Demo screenshot
 ![Structure](https://raw.github.com/tuoxie007/audio-stream-player-objc/master/structure.png)
 
 Figure 1-2. Components and Data
+
+
+## Still need help?
+
+Ask me on twitter, [@tuoxie007](https://twitter.com/tuoxie007)
