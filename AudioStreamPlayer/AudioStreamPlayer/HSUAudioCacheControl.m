@@ -121,7 +121,7 @@
         _useMeta = useMeta;
         
         if (_useMeta) {
-            _metaFilePath = [NSString stringWithFormat:@"%@.meta", cacheFilePath];
+            _metaFilePath = [[NSString stringWithFormat:@"%@.meta", cacheFilePath] copy];
             
             if (![[NSFileManager defaultManager] fileExistsAtPath:_cacheFilePath]) {
                 BOOL succ = [[NSFileManager defaultManager]
@@ -149,7 +149,7 @@
                                             attributesOfItemAtPath:_cacheFilePath
                                             error:nil];
             _contentLength = [[fileAttributes objectForKey:NSFileSize]
-                              unsignedLongLongValue];
+                              unsignedIntegerValue];
         }
     }
     return self;

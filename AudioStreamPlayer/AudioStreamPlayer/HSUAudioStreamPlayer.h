@@ -40,6 +40,7 @@
     if (err != noErr) { \
         HLogErr(err); \
         self.state = HSU_AS_ERROR; \
+        return; \
     }
 #else
 #define CheckErr(arg) \
@@ -95,6 +96,9 @@ NSString *stateText(HSUAudioStreamPlayBackState state);
 // Audio will start playing when buffer is filled or file ended/errored.
 // So, change bufferByteSize can change use's waiting time.
 @property (nonatomic, assign) NSUInteger bufferByteSize;
+// dynamic compute bufferByteSize base on audio bitrate
+// use greater byteSize between bufferAudioLength and bufferByteSize
+@property (nonatomic, assign) double bufferAudioSeconds;
 
 @property (nonatomic, assign) BOOL enableBlueTooth;
 @property (nonatomic, assign) BOOL enableHeadset;

@@ -53,6 +53,9 @@
                          useMeta:_url != nil];
         _cacheControl.encryptor = self.cacheEncryptor;
     }
+    if (_cacheControl.contentLength && _cacheControl.contentLength <= _byteOffset) {
+        return nil;
+    }
     NSData *buffer = [_cacheControl readCacheFromOffset:_byteOffset
                                               maxLength:maxLength
                                                   error:error];
@@ -75,10 +78,10 @@
         } else if (_byteOffset < self.contentLength) {
             *error = YES;
         }
-        //HLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
+//        HLog(@"read network %u, %u", _byteOffset/1024, buffer.length);
     } else {
         _networkControl = nil;
-        //HLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
+//        HLog(@"read cache %u, %u", _byteOffset/1024, buffer.length);
     }
     _byteOffset += buffer.length;
     
