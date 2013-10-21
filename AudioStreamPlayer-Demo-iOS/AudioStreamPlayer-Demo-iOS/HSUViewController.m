@@ -70,7 +70,7 @@ NSString *md5Hash (NSString *str);
         [[NSNotificationCenter defaultCenter]
          addObserver:self
          selector:@selector(playBackStateChanged:)
-         name:HSUAudioStreamPlayerStateChanged
+         name:HSUAudioStreamPlayerStateChangedNotification
          object:self.player];
         [self.player play];
     }

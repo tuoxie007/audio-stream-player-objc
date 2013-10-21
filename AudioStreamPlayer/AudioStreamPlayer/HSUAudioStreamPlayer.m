@@ -92,18 +92,20 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 
 - (void)dealloc
 {
-    _dataProvider = nil;
-    _url = nil;
-    _cacheFilePath = nil;
-    pthread_mutex_destroy(&_bufferMutex);
-    pthread_cond_destroy(&_bufferCond);
-    if (_audioQueue) {
-        AudioQueueDispose(_audioQueue, 0);
-        _audioQueue = nil;
+    @synchronized(self) {
+        _dataProvider = nil;
+        _url = nil;
+        _cacheFilePath = nil;
+        pthread_mutex_destroy(&_bufferMutex);
+        pthread_cond_destroy(&_bufferCond);
+        if (_audioQueue) {
+            AudioQueueDispose(_audioQueue, 0);
+            _audioQueue = nil;
+        }
+        //dispatch_release(_dataEnqueueDP);
+        free(_meterStateOfChannels);
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
     }
-    dispatch_release(_dataEnqueueDP);
-    free(_meterStateOfChannels);
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (instancetype)initWithURL:(NSURL *)url
@@ -425,38 +427,40 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 // isRunning changed
 - (OSStatus)handleAudioQueuePropertyChanged:(AudioQueuePropertyID)pid
 {
-    if (pid == kAudioQueueProperty_IsRunning)
-    {
-        UInt32 size = sizeof(UInt32);
-        AudioQueueGetProperty(_audioQueue, pid, &_isRunning, &size);
-        if (_isRunning == 0) {
-            // reset variables
-            _consumedAudioPacketsNumber = 0;
-            _consumedAudioBytesNumber = 0;
-            _enqueuedBufferCount = 0;
-            _dequeuedBufferCount = 0;
-            
-            if (_readEnd) {
-                _seekByteOffset = 0;
-                _seekTime = 0;
-                self.state = HSU_AS_FINISHED;
-            } else if (_userStop) {
-                _seekByteOffset = 0;
-                _seekTime = 0;
-                self.state = HSU_AS_STOPPED;
-            } else if (_readError) {
-                _seekByteOffset = _currentOffset;
-                _seekTime = _seekByteOffset / self.bitrate * 8;
-                __weak typeof(self)weakSelf = self;
-                dispatch_async(_dataEnqueueDP, ^{
-                    [weakSelf _enqueueData];
-                });
+    @synchronized(self) {
+        if (pid == kAudioQueueProperty_IsRunning)
+        {
+            UInt32 size = sizeof(UInt32);
+            AudioQueueGetProperty(_audioQueue, pid, &_isRunning, &size);
+            if (_isRunning == 0) {
+                // reset variables
+                _consumedAudioPacketsNumber = 0;
+                _consumedAudioBytesNumber = 0;
+                _enqueuedBufferCount = 0;
+                _dequeuedBufferCount = 0;
+                
+                if (_readEnd) {
+                    _seekByteOffset = 0;
+                    _seekTime = 0;
+                    self.state = HSU_AS_FINISHED;
+                } else if (_userStop) {
+                    _seekByteOffset = 0;
+                    _seekTime = 0;
+                    self.state = HSU_AS_STOPPED;
+                } else if (_readError) {
+                    _seekByteOffset = _currentOffset;
+                    _seekTime = _seekByteOffset / self.bitrate * 8;
+                    __weak typeof(self)weakSelf = self;
+                    dispatch_async(_dataEnqueueDP, ^{
+                        [weakSelf _enqueueData];
+                    });
+                }
+            } else {
+                self.state = HSU_AS_PLAYING;
             }
-        } else {
-            self.state = HSU_AS_PLAYING;
         }
+        return noErr;
     }
-    return noErr;
 }
 
 - (NSUInteger)dataOffset
@@ -486,7 +490,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 
 - (double)duration
 {
-    return self.presetDuration ?: self.duration;
+    return self.presetDuration ?: _streamDesc.duration;
 }
 
 - (double)bitrate
