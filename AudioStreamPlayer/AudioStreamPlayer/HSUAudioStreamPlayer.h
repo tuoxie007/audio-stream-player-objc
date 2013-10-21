@@ -6,7 +6,6 @@
 //  Copyright (c) 2013年 Jason Hsu. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <UIKit/UIKit.h>
 
