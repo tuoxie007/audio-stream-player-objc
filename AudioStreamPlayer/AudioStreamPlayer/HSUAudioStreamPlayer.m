@@ -67,6 +67,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     NSUInteger _seekByteOffset;
     double _seekTime;
     NSUInteger _currentOffset;
+    NSUInteger _dataStartOffset;
     
     BOOL _readingData;
     BOOL _readEnd;
@@ -163,8 +164,8 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         [self _start];
     } else {
         BOOL seek = _seekByteOffset > 0;
-        err = AudioQueueStart(_audioQueue, NULL);
-        if (err == noErr) {
+        OSStatus error = AudioQueueStart(_audioQueue, NULL);
+        if (error == noErr) {
             BOOL hasBuffer = _enqueuedBufferCount > _dequeuedBufferCount;
             if (seek || !hasBuffer) {
                 self.state = HSU_AS_WAITTING;
@@ -172,7 +173,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                 self.state = HSU_AS_PLAYING;
             }
         } else {
-            HLogErr(err);
+            HLogErr(error);
         }
     }
 }
@@ -203,7 +204,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         _consumedAudioBytesNumber = 0;
         
         _seekTime = time;
-        _seekByteOffset = self.bitrate / 8 * _seekTime;
+        _seekByteOffset = self.bitrate / 8 * _seekTime + _dataStartOffset;
         if (_seekByteOffset == 0) {
             _seekByteOffset = -1;
         }
@@ -235,15 +236,22 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     while (!_userStop) {
         @autoreleasepool {
             if (_seekByteOffset) {
-                float packetNumPerSecond = _asbd.mSampleRate / _asbd.mFramesPerPacket;
+                float packetRate = _asbd.mSampleRate / _asbd.mFramesPerPacket;
                 
                 UInt32 ioFlags = 0;
                 SInt64 packetAlignedByteOffset;
-                SInt64 seekPacketOffset = floor(_seekTime * packetNumPerSecond);
-                AudioFileStreamSeek(_audioFileStream,
-                                    seekPacketOffset,
-                                    &packetAlignedByteOffset,
-                                    &ioFlags);
+                SInt64 seekPacketOffset = floor(_seekTime * packetRate);
+                OSStatus error = AudioFileStreamSeek(_audioFileStream,
+                                                     seekPacketOffset,
+                                                     &packetAlignedByteOffset,
+                                                     &ioFlags);
+                if (!error && !(ioFlags & kAudioFileStreamSeekFlag_OffsetIsEstimated)) {
+                    _seekTime = packetAlignedByteOffset * 8 / self.bitrate;
+                    _seekByteOffset = packetAlignedByteOffset + _dataStartOffset;
+                }
+                if (error) {
+                    HLogErr(error);
+                }
                 
                 if (_audioQueue && _isRunning) {
                     CheckErr(AudioQueueStop(_audioQueue, true));
@@ -377,7 +385,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                 _streamDesc.bitrate = (double)_consumedAudioBytesNumber / _consumedAudioPacketsNumber / _asbd.mFramesPerPacket * _asbd.mSampleRate * 8;
                 if (first) {
                     if (_seekTime) {
-                        _seekByteOffset = _seekTime * self.bitrate / 8;
+                        _seekByteOffset = _seekTime * self.bitrate / 8 + _dataStartOffset;
                     }
                 }
             }
@@ -387,6 +395,12 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                 } else if (_streamDesc.contentLength) {
                     _streamDesc.duration = _streamDesc.contentLength / (self.bitrate / 8);
                 }
+                __weak typeof(self)weakSelf = self;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter]
+                     postNotificationName:HSUAudioStreamPlayerDurationUpdatedNotification
+                     object:weakSelf];
+                });
             }
         }
     }
@@ -394,15 +408,21 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
     pthread_mutex_lock(&_bufferMutex);
     while (_enqueuedBufferCount - _dequeuedBufferCount >= _bufferQueueSize - kMinBufferQueueSize) {
         if (self.state != HSU_AS_PAUSED) {
-            AudioQueueStart(_audioQueue, 0);
+            OSStatus error = AudioQueueStart(_audioQueue, 0);
+            if (error) {
+                HLogErr(error);
+            }
             self.state = HSU_AS_PLAYING;
         }
         pthread_cond_wait(&_bufferCond, &_bufferMutex);
     }
-    AudioQueueEnqueueBuffer(_audioQueue,
-                            _buffers[bufferIndex],
-                            _bufferPacketsCounts[bufferIndex],
-                            _bufferPacketDescs[bufferIndex]);
+    OSStatus error = AudioQueueEnqueueBuffer(_audioQueue,
+                                             _buffers[bufferIndex],
+                                             _bufferPacketsCounts[bufferIndex],
+                                             _bufferPacketDescs[bufferIndex]);
+    if (error) {
+        HLogErr(error);
+    }
     _enqueuedBufferCount ++;
     pthread_mutex_unlock(&_bufferMutex);
 }
@@ -472,8 +492,8 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
 {
     if (_audioQueue && !_seekByteOffset) {
         AudioTimeStamp queueTime;
-        err = AudioQueueGetCurrentTime(_audioQueue, NULL, &queueTime, NULL);
-        if (err == noErr) {
+        OSStatus error = AudioQueueGetCurrentTime(_audioQueue, NULL, &queueTime, NULL);
+        if (error == noErr) {
             return _seekTime + queueTime.mSampleTime / _asbd.mSampleRate;
         }
     }
@@ -552,6 +572,7 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
             HLog(@"Fail to enable bluebooth, self.audioCategory = %@", self.audioSessionCategory);
         }
     } else {
+#ifndef __IPHONE_7_0
         if (self.audioSessionCategory) {
             [[AVAudioSession sharedInstance]
              setCategory:self.audioSessionCategory
@@ -572,11 +593,14 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                                     sizeof(defaultToSpeaker),
                                     &defaultToSpeaker);
         }
+#endif
     }
+#ifndef __IPHONE_7_0
     if (self.enableHeadset) {
         UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_None;
         AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute, sizeof(audioRouteOverride), &audioRouteOverride);
     }
+#endif
 }
 
 - (void)_dataWait:(NSNotification *)notification
@@ -620,19 +644,16 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                                            (__bridge void *)self));
 	
 	UInt32 sizeOfUInt32 = sizeof(UInt32);
-    err = AudioFileStreamGetProperty(_audioFileStream,
+    AudioFileStreamGetProperty(_audioFileStream,
                                      kAudioFileStreamProperty_PacketSizeUpperBound,
                                      &sizeOfUInt32,
                                      &_bufferSize);
-	if (err || _bufferSize == 0) {
-		err = AudioFileStreamGetProperty(_audioFileStream,
-                                         kAudioFileStreamProperty_MaximumPacketSize,
-                                         &sizeOfUInt32,
-                                         &_bufferSize);
-		if (err || _bufferSize == 0) {
-            _bufferSize = kMaxBufferSize;
-		}
-	}
+//	if (error) {
+//		error = AudioFileStreamGetProperty(_audioFileStream,
+//                                         kAudioFileStreamProperty_MaximumPacketSize,
+//                                         &sizeOfUInt32,
+//                                         &_bufferSize);
+//	}
     
     [self _computeBufferQueueSize];
     
@@ -729,7 +750,9 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
                                             propertyID,
                                             &psize,
                                             &_streamDesc.dataByteCount));
-        _streamDesc.duration = _streamDesc.dataByteCount / self.bitrate * 8;
+        if (self.bitrate) {
+            _streamDesc.duration = _streamDesc.dataByteCount / self.bitrate * 8;
+        }
     }
     else if (propertyID == kAudioFileStreamProperty_DataFormat)
     {
@@ -774,8 +797,13 @@ AudioFileTypeID hintForFileExtension(NSString *fileExtension);
         }
         free(formatList);
     }
+    else if (propertyID == kAudioFileStreamProperty_DataOffset)
+    {
+        UInt32 psize = sizeof(SInt64);
+        AudioFileStreamGetProperty(_audioFileStream, propertyID, &psize, &_dataStartOffset);
+    }
     if (_asbd.mSampleRate && self.bitrate && _seekTime) { // got format
-        _seekByteOffset = _seekTime * self.bitrate / 8;
+        _seekByteOffset = _seekTime * self.bitrate / 8 + _dataStartOffset;
     }
 }
 

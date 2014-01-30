@@ -14,6 +14,7 @@
 #import "HSUAudioDataProvider.h"
 
 #define HSUAudioStreamPlayerStateChangedNotification (@"HSUAudioStreamPlayerStateChangedNotification")
+#define HSUAudioStreamPlayerDurationUpdatedNotification (@"HSUAudioStreamPlayerDurationUpdatedNotification")
 #define HSUDefaultAudioCacheFileEncryptorPassword 200
 
 
@@ -50,8 +51,12 @@
     }
 #endif
 
+#ifdef __IPHONE_6_0
 #define IPHONE_6_OR_LATER \
     [[UIDevice currentDevice].systemVersion compare:@"6.0"] >= NSOrderedDescending
+#else
+#define IPHONE_6_OR_LATER NO
+#endif
 
 typedef struct HSUAudioStreamDescription {
     double bitrate;
@@ -74,7 +79,7 @@ typedef NS_ENUM (NSUInteger, HSUAudioStreamPlayBackState) {
 
 // As default: buffer memory = kMaxBufferSize * kMaxBufferQueueSize
 #define kMaxBufferSize 2048
-#define kMaxBufferQueueSize 300
+#define kMaxBufferQueueSize 10
 #define kMinBufferQueueSize 3
 
 NSString *stateText(HSUAudioStreamPlayBackState state);

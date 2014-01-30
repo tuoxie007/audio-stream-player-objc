@@ -72,6 +72,11 @@ NSString *md5Hash (NSString *str);
          selector:@selector(playBackStateChanged:)
          name:HSUAudioStreamPlayerStateChangedNotification
          object:self.player];
+        [[NSNotificationCenter defaultCenter]
+         addObserver:self
+         selector:@selector(playBackDurationChanged:)
+         name:HSUAudioStreamPlayerDurationUpdatedNotification
+         object:self.player];
         [self.player play];
     }
     else if (state == HSU_AS_PLAYING) {
@@ -122,6 +127,14 @@ NSString *md5Hash (NSString *str);
         [self updateProgress];
         [self stopProgressMonitor];
     }
+}
+
+- (void)playBackDurationChanged:(NSNotification *)notification
+{
+    self.durationLabel.text = [NSString
+                               stringWithFormat:@"%gs",
+                               ceil(self.player.duration)];
+    [self.durationLabel sizeToFit];
 }
 
 - (void)startProgressMonitor
